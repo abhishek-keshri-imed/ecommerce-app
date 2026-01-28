@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+dashboard/node_modules/
+
+# Environment Secrets (CRITICAL)
+.env
+backend/.env
+
+# Build outputs
+dashboard/dist/
+dashboard/build/
+
+# IDE and OS files
+.DS_Store
+.vscode/
