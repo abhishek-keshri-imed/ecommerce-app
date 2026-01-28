@@ -193,10 +193,9 @@ const AdminPendingSeller = () => {
               </tr>
             </thead>
             <tbody>
-              {currentSellers.map((s, i) => (
+              {currentSellers.map((s) => (
                 <tr
-                  key={i}
-                  className="border-b border-slate-700 hover:bg-slate-800/50 transition-all"
+                  key={s.no}                  className="border-b border-slate-700 hover:bg-slate-800/50 transition-all"
                 >
                   <td className="py-3 px-4 font-medium">{s.no}</td>
                   <td className="py-3 px-4">
