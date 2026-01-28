@@ -12,6 +12,11 @@ const SellerDetails = lazy(() => import("../../views/admin/SellerDetails"));
 const AdminPaymentsProcess = lazy(() => import("../../views/admin/AdminPaymentProcess"));
 const PaymentHistory=lazy(()=>import("../../views/admin/PaymentHistory"))
 const NotFound=lazy(()=>import("../../views/NotFound"))
+const AdminDeactivateSellers =lazy(()=> import ("../../views/admin/AdminDeactivateSeller"))
+const DeaciveSellerDetails = lazy(() => import("../../views/admin/DeactiveSellerDetails"));
+const AdminPendingSellers =lazy(()=> import ("../../views/admin/AdminPendingSeller"))
+const PendingSellerDetails = lazy(() => import("../../views/admin/PendingSellerDetails"));
+
 
 
 
@@ -30,6 +35,10 @@ export const adminRoutes = [
             { path: 'seller/details/:sellerId', element: <SellerDetails />, role: 'admin' },
             { path: 'payment-request', element: <AdminPaymentsProcess />, role: 'admin' },
             { path: 'dashboard/payment-history', element: <PaymentHistory />, role: 'admin' },
+            { path: 'deactive-sellers', element: <AdminDeactivateSellers />, role: 'admin' },
+            { path: 'deactive-sellers/details/:sellerId', element: <DeaciveSellerDetails />, role: 'admin' },
+            { path: 'sellers-request', element: <AdminPendingSellers />, role: 'admin' },
+            { path: 'sellers-request/details/:sellerId', element: <PendingSellerDetails />, role: 'admin' },
             /* --- CATCH-ALL FOR ADMIN SUB-ROUTES --- */
             { 
                 path: '*', 
