@@ -15,11 +15,7 @@ const NotFound=lazy(()=>import("../../views/NotFound"))
 const AdminDeactivateSellers =lazy(()=> import ("../../views/admin/AdminDeactivateSeller"))
 const DeactiveSellerDetails = lazy(() => import("../../views/admin/DeactiveSellerDetails"));const AdminPendingSellers =lazy(()=> import ("../../views/admin/AdminPendingSeller"))
 const PendingSellerDetails = lazy(() => import("../../views/admin/PendingSellerDetails"));
-
-
-
-
-
+const  AdminSellerChat= lazy(()=> import("../../views/admin/AdminLiveChat.jsx"));
 
 export const adminRoutes = [
     {
@@ -38,6 +34,7 @@ export const adminRoutes = [
             { path: 'deactive-sellers/details/:sellerId', element: <DeactiveSellerDetails />, role: 'admin' },
             { path: 'sellers-request', element: <AdminPendingSellers />, role: 'admin' },
             { path: 'sellers-request/details/:sellerId', element: <PendingSellerDetails />, role: 'admin' },
+            { path: 'chat-sellers', element: <AdminSellerChat />, role: 'admin' },
             /* --- CATCH-ALL FOR ADMIN SUB-ROUTES --- */
             { 
                 path: '*', 

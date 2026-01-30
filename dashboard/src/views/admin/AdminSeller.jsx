@@ -6,7 +6,7 @@ import Pagination from "../../components/Pagination"; // Reusing the component c
 const AdminSellers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState("");
-  const [parPage, setParPage] = useState(5);
+  const [parPage, setParPage] = useState(10);
 
   // --- Mock Data Category: 20 Sellers ---
   const [sellers] = useState([
@@ -251,7 +251,6 @@ const AdminSellers = () => {
             }}
             className="px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]"
           >
-            <option value="5">5</option>
             <option value="10">10</option>
             <option value="20">20</option>
           </select>
