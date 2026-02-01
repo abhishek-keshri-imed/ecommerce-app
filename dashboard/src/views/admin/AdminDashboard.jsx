@@ -108,7 +108,7 @@ const AdminDashboard = () => {
             <div className="w-full bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-117.5 flex flex-col">
               <div className="flex justify-between items-center pb-5 border-b border-gray-50 shrink-0">
                 <h2 className="font-bold text-lg text-gray-800">Direct Messages</h2>
-                <Link to="/admin/messages" className="text-xs text-indigo-600 hover:text-indigo-800 font-bold uppercase tracking-tighter">View All</Link>
+                <Link to="/admin/chat-sellers" className="text-xs text-indigo-600 hover:text-indigo-800 font-bold uppercase tracking-tighter">View All</Link>
               </div>
               <div className="flex-1 overflow-y-auto mt-4 custom-scrollbar pr-2">
                 {recentMessages.map((seller, i) => (

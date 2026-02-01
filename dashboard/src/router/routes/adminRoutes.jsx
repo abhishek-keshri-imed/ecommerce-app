@@ -17,6 +17,7 @@ const DeactiveSellerDetails = lazy(() => import("../../views/admin/DeactiveSelle
 const AdminPendingSellers =lazy(()=> import ("../../views/admin/AdminPendingSeller"))
 const PendingSellerDetails = lazy(() => import("../../views/admin/PendingSellerDetails"));
 const  AdminSellerChat= lazy(()=> import("../../views/admin/AdminLiveChat.jsx"));
+const OrderDetail=lazy(()=> import("../../views/admin/AdminOrderDetail.jsx"))
 
 export const adminRoutes = [
     {
@@ -26,6 +27,7 @@ export const adminRoutes = [
         children: [
             { path: 'dashboard', element: <AdminDashboard />, role: 'admin' },
             { path: 'orders', element: <AdminOrder />, role: 'admin' },
+            { path: 'dashboard/orders/details/:orderId', element: <OrderDetail/>, role: 'admin' },
             { path: 'categories', element: <AdminCategory />, role: 'admin' },
             { path: 'sellers', element: <AdminSeller />, role: 'admin' },
             { path: 'seller/details/:sellerId', element: <SellerDetails />, role: 'admin' },
