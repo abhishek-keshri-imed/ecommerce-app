@@ -4,17 +4,16 @@ import {
   FaTrash,
   FaSearch,
   FaCloudUploadAlt,
-  FaAngleLeft,
-  FaAngleRight,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Pagination from "../../components/Pagination";
 
 const Category = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [imageShow, setImageShow] = useState("");
-  const parPage = 5;
+  const [parPage, setParPage] = useState(5); // Now dynamic
 
   const [state, setState] = useState({ name: "", image: "" });
 
@@ -45,24 +44,6 @@ const Category = () => {
       { name: "Women's Ethnic Wear", img: "https://images.pexels.com/photos/2235071/pexels-photo-2235071.jpeg?auto=compress&cs=tinysrgb&w=150" },
       { name: "Hoodies & Sweatshirts", img: "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=150" },
       { name: "Leather Jackets", img: "https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Puffer Coats", img: "https://images.pexels.com/photos/833052/pexels-photo-833052.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Trench Coats", img: "https://images.pexels.com/photos/7622432/pexels-photo-7622432.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Woolen Sweaters", img: "https://images.pexels.com/photos/5705490/pexels-photo-5705490.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Running Shorts", img: "https://images.pexels.com/photos/3473492/pexels-photo-3473492.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Sports Bras", img: "https://images.pexels.com/photos/3757363/pexels-photo-3757363.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Tracksuits", img: "https://images.pexels.com/photos/7022523/pexels-photo-7022523.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Compression Wear", img: "https://images.pexels.com/photos/4753896/pexels-photo-4753896.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Gym Stringers", img: "https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Casual Sneakers", img: "https://images.pexels.com/photos/1464625/pexels-photo-1464625.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Formal Shoes", img: "https://images.pexels.com/photos/292999/pexels-photo-292999.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Streetwear Caps", img: "https://images.pexels.com/photos/1078973/pexels-photo-1078973.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Canvas Bags", img: "https://images.pexels.com/photos/1126993/pexels-photo-1126993.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Belts & Wallets", img: "https://images.pexels.com/photos/1453008/pexels-photo-1453008.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Baby Rompers", img: "https://images.pexels.com/photos/1619697/pexels-photo-1619697.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Kids' Graphic Tees", img: "https://images.pexels.com/photos/1648387/pexels-photo-1648387.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Sleepwear/Pyjamas", img: "https://images.pexels.com/photos/1023243/pexels-photo-1023243.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Beachwear", img: "https://images.pexels.com/photos/1323667/pexels-photo-1323667.jpeg?auto=compress&cs=tinysrgb&w=150" },
-      { name: "Sustainable Fashion", img: "https://images.pexels.com/photos/6032425/pexels-photo-6032425.jpeg?auto=compress&cs=tinysrgb&w=150" },
     ],
     []
   );
@@ -73,172 +54,145 @@ const Category = () => {
     );
   }, [debouncedSearch, clothingCategories]);
 
-  const totalPages = Math.ceil(filteredData.length / parPage);
   const firstIndex = (currentPage - 1) * parPage;
   const currentData = filteredData.slice(firstIndex, firstIndex + parPage);
 
-  // Helper to generate the smart page numbers (1 ... 4 5 6 ... 30)
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
-    } else {
-      pageNumbers.push(1);
-      if (currentPage > 3) pageNumbers.push('...');
-      
-      let start = Math.max(2, currentPage - 1);
-      let end = Math.min(totalPages - 1, currentPage + 1);
-
-      for (let i = start; i <= end; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (currentPage < totalPages - 2) pageNumbers.push('...');
-      pageNumbers.push(totalPages);
-    }
-    return pageNumbers;
-  };
-
   return (
-    <div className="px-2 lg:px-7 pt-5">
-      <div className="flex flex-col-reverse lg:flex-row w-full gap-6">
+    <div className='mt-2 h-[calc(100vh-110px)] w-full bg-[#f8f9fa] overflow-hidden flex flex-col relative'>
+      
+      {/* Scrollable Container */}
+      <div className="flex-1 overflow-y-auto p-4 lg:p-7 custom-scrollbar overscroll-contain">
+        <div className="flex flex-col-reverse lg:flex-row w-full gap-6">
 
-        {/* --- Left Side: Category List --- */}
-        <div className="w-full lg:w-7/12">
-          <div className="w-full p-4 bg-[#283046] rounded-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-[#d0d2d6] font-semibold text-lg">Categories</h2>
-              <div className="relative">
-                <input
-                  value={searchValue}
-                  onChange={(e) => {
-                    setSearchValue(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="bg-[#161d31] border border-slate-700 text-[#d0d2d6] rounded-md px-10 py-1 focus:border-indigo-500 outline-none text-sm"
-                  type="text"
-                  placeholder="Search..."
-                />
-                <FaSearch className="absolute left-3 top-2 text-slate-400" size={14} />
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-
-              <table className="w-full text-[#d0d2d6] text-left">
-                <thead className="text-sm border-b border-slate-700 uppercase">
-                  <tr>
-                    <th className="py-3 px-4">No</th>
-                    <th className="py-3 px-4">Image</th>
-                    <th className="py-3 px-4">Name</th>
-                    <th className="py-3 px-4 text-center">Action</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {currentData.map((d, i) => (
-                    <tr key={i} className="border-b border-slate-700 hover:bg-[#343d55]/30">
-                      <td className="py-3 px-4 text-slate-400">{i + 1 + firstIndex}</td>
-                      <td className="py-3 px-4">
-                        <img className="w-11.25 h-11.25 rounded-md object-cover" src={d.img} alt="" />
-                      </td>
-                      <td className="py-3 px-4 font-semibold text-sm">{d.name}</td>
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex justify-center items-center gap-4">
-                          <Link className="p-1.5 bg-yellow-500/20 text-yellow-500 rounded hover:shadow-lg">
-                            <FaEdit size={14} />
-                          </Link>
-                          <button className="p-1.5 bg-red-500/20 text-red-500 rounded hover:shadow-lg">
-                            <FaTrash size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
-            </div>
-
-            {/* ---  PAGINATION UI --- */}
-            {totalPages > 1 && (
-              <div className="w-full flex justify-end mt-4 gap-2 items-center">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((prev) => prev - 1)}
-                  className="p-2 rounded bg-[#161d31] text-[#d0d2d6] disabled:opacity-30 hover:bg-slate-700"
-                >
-                  <FaAngleLeft />
-                </button>
-
-                {getPageNumbers().map((num, index) => (
-                  <button
-                    key={index}
-                    onClick={() => typeof num === "number" && setCurrentPage(num)}
-                    className={`px-3 py-1 rounded text-sm font-medium transition-all ${
-                      currentPage === num
-                        ? "bg-indigo-600 text-white shadow-lg"
-                        : num === "..."
-                        ? "bg-transparent cursor-default text-slate-500"
-                        : "bg-[#161d31] text-[#d0d2d6] hover:bg-slate-700"
-                    }`}
-                  >
-                    {num}
-                  </button>
-                ))}
-
-                <button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="p-2 rounded bg-[#161d31] text-[#d0d2d6] disabled:opacity-30 hover:bg-slate-700"
-                >
-                  <FaAngleRight />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* --- Right Side: Add New Category Form --- */}
-        <div className="w-full lg:w-[38%]">
-
-          <div className="bg-[#283046] p-4 rounded-md text-[#d0d2d6]">
-            <h2 className="font-semibold mb-4 text-lg border-b border-slate-700 pb-2">Add New Category</h2>
-
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="flex flex-col w-full gap-1 mb-4">
-                <label htmlFor="name" className="text-sm">Category Name</label>
-                <input
-                  value={state.name}
-                  onChange={(e) => setState({ ...state, name: e.target.value })}
-                  className="px-4 py-2 bg-[#161d31] border border-slate-700 rounded-md outline-none focus:border-indigo-500 text-[#d0d2d6]"
-                  type="text"
-                  id="name"
-                  placeholder="Category Name"
-                />
-              </div>
+          {/* --- Left Side: Category List --- */}
+          <div className="w-full lg:w-7/12">
+            <div className="w-full p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
               
-              <div className="mb-6">
-                <label className="flex justify-center items-center flex-col h-59.5 cursor-pointer border-2 border-dashed border-slate-700 hover:border-indigo-500 w-full rounded-md bg-[#161d31]" htmlFor="image">
-                  {imageShow ? (
-                    <img className="w-full h-full object-contain" src={imageShow} alt="preview" />
-                  ) : (
-                    <>
-                      <FaCloudUploadAlt size={40} className="text-indigo-500" />
-                      <span className="text-sm mt-2">Select Category Image</span>
-                    </>
-                  )}
-                </label>
-                <input onChange={imageHandle} className="hidden" type="file" id="image" accept="image/*" />
-              </div>
-              <button className="bg-indigo-600 w-full text-white rounded-md px-7 py-2.5 font-bold uppercase hover:shadow-indigo-500/40 hover:shadow-lg transition-all">
-                Save Category
-              </button>
-            </form>
+              {/* Header with Search and PerPage Filter */}
+              <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <div className="flex items-center gap-3">
+                    <select
+                        value={parPage}
+                        onChange={(e) => {
+                            setParPage(parseInt(e.target.value));
+                            setCurrentPage(1);
+                        }}
+                        className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer shadow-sm"
+                    >
+                        <option value="5">5 Per Page</option>
+                        <option value="10">10 Per Page</option>
+                        <option value="20">20 Per Page</option>
+                    </select>
+                </div>
 
+                <div className="relative flex items-center">
+                  <input
+                    value={searchValue}
+                    onChange={(e) => {
+                      setSearchValue(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="bg-white border border-gray-300 text-gray-700 rounded-lg px-10 py-2 focus:ring-2 focus:ring-indigo-500 outline-none text-sm w-64 shadow-sm"
+                    type="text"
+                    placeholder="Search category..."
+                  />
+                  <FaSearch className="absolute left-3 text-gray-400" size={16} />
+                </div>
+              </div>
+
+              <div className="overflow-x-auto rounded-xl border border-gray-100">
+                <table className="w-full text-gray-600 text-left">
+                  <thead className="text-[11px] border-b border-gray-100 uppercase tracking-widest bg-gray-50 text-gray-400 font-bold">
+                    <tr>
+                      <th className="py-4 px-4">No</th>
+                      <th className="py-4 px-4">Image</th>
+                      <th className="py-4 px-4">Name</th>
+                      <th className="py-4 px-4 text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {currentData.map((d, i) => (
+                      <tr key={i} className="hover:bg-indigo-50/30 transition-all">
+                        <td className="py-4 px-4 text-gray-500 font-medium">{i + 1 + firstIndex}</td>
+                        <td className="py-4 px-4">
+                          <img className="w-10 h-10 rounded-lg object-cover border border-gray-100" src={d.img} alt="" />
+                        </td>
+                        <td className="py-4 px-4 font-bold text-gray-800 text-sm">{d.name}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex justify-center items-center gap-3">
+                            <Link className="p-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-500 hover:text-white transition-all shadow-sm">
+                              <FaEdit size={14} />
+                            </Link>
+                            <button className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                              <FaTrash size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination Component */}
+              <div className="w-full flex justify-end mt-6">
+                <Pagination
+                    pageNumber={currentPage}
+                    setPageNumber={setCurrentPage}
+                    totalItem={filteredData.length}
+                    parPage={parPage}
+                    showItem={3}
+                />
+              </div>
+            </div>
           </div>
+
+          {/* --- Right Side: Add Form (Fixed behavior within scroll) --- */}
+          <div className="w-full lg:w-[38%]">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 sticky top-0">
+              <h2 className="font-bold mb-6 text-lg text-gray-800 border-b border-gray-100 pb-4 tracking-tight">Add New Category</h2>
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="flex flex-col w-full gap-2 mb-4">
+                  <label htmlFor="name" className="text-xs font-bold text-gray-400 uppercase tracking-wider">Category Name</label>
+                  <input
+                    value={state.name}
+                    onChange={(e) => setState({ ...state, name: e.target.value })}
+                    className="px-4 py-2 bg-white border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700 shadow-sm"
+                    type="text"
+                    id="name"
+                    placeholder="e.g. Streetwear"
+                  />
+                </div>
+                
+                <div className="mb-6">
+                  <label className="flex justify-center items-center flex-col h-60 cursor-pointer border-2 border-dashed border-gray-200 hover:border-indigo-500 hover:bg-indigo-50/20 w-full rounded-2xl transition-all" htmlFor="image">
+                    {imageShow ? (
+                      <img className="w-full h-full object-contain p-2" src={imageShow} alt="preview" />
+                    ) : (
+                      <>
+                        <FaCloudUploadAlt size={40} className="text-indigo-500 mb-2" />
+                        <span className="text-xs font-bold text-gray-500">UPLOAD CATEGORY IMAGE</span>
+                      </>
+                    )}
+                  </label>
+                  <input onChange={imageHandle} className="hidden" type="file" id="image" accept="image/*" />
+                </div>
+                <button className="bg-indigo-600 w-full text-white rounded-xl px-7 py-3 font-bold uppercase text-sm hover:shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                  Save Category
+                </button>
+              </form>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      <style>{`
+          .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+          .custom-scrollbar::-webkit-scrollbar-track { background: #f8f9fa; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+      `}</style>
     </div>
   );
 };

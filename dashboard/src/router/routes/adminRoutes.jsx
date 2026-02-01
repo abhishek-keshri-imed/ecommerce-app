@@ -13,7 +13,8 @@ const AdminPaymentsProcess = lazy(() => import("../../views/admin/AdminPaymentPr
 const PaymentHistory=lazy(()=>import("../../views/admin/PaymentHistory"))
 const NotFound=lazy(()=>import("../../views/NotFound"))
 const AdminDeactivateSellers =lazy(()=> import ("../../views/admin/AdminDeactivateSeller"))
-const DeactiveSellerDetails = lazy(() => import("../../views/admin/DeactiveSellerDetails"));const AdminPendingSellers =lazy(()=> import ("../../views/admin/AdminPendingSeller"))
+const DeactiveSellerDetails = lazy(() => import("../../views/admin/DeactiveSellerDetails"));
+const AdminPendingSellers =lazy(()=> import ("../../views/admin/AdminPendingSeller"))
 const PendingSellerDetails = lazy(() => import("../../views/admin/PendingSellerDetails"));
 const  AdminSellerChat= lazy(()=> import("../../views/admin/AdminLiveChat.jsx"));
 

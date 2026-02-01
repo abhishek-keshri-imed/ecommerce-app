@@ -1,297 +1,164 @@
 /* eslint-disable react-hooks/purity */
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Pagination from "../../components/Pagination";
 import * as XLSX from "xlsx";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { MdSearch, MdFilterList, MdRefresh, MdPayments } from "react-icons/md";
 
 const PaymentHistory = () => {
-  // --- States ---
   const [pageNumber, setPageNumber] = useState(1);
   const [searchValue, setSearchValue] = useState("");
   const [filterQuery, setFilterQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [appliedRange, setAppliedRange] = useState({ start: "", end: "" });
-  const parPage = 5;
+  const parPage = 8;
 
-  // --- 1. Generate Mock Data (Memoized) ---
   const allSellers = useMemo(() => {
-    const names = [
-      "Fashion Store",
-      "Tech Gadgets",
-      "Home Decor",
-      "Organic Foods",
-      "Sheikh Store",
-      "Urban Threads",
-      "Mega Mart",
-      "Elite Electronics",
-      "Vintage Vibes",
-      "Sporty Co",
-      "Beauty Bliss",
-      "Kids Zone",
-      "Auto Parts",
-      "Book Haven",
-      "Green Garden",
-      "Music World",
-      "Pet Paradise",
-      "Kitchen King",
-      "Toy Box",
-      "Smart Home",
-    ];
-
+    const names = ["Fashion Store", "Tech Gadgets", "Home Decor", "Organic Foods", "Sheikh Store", "Urban Threads", "Mega Mart", "Elite Electronics", "Vintage Vibes", "Sporty Co", "Beauty Bliss", "Kids Zone"];
     const getRandomDate = (start, end) => {
-      const date = new Date(
-        start.getTime() + Math.random() * (end.getTime() - start.getTime())
-      );
+      const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
       return date.toISOString().split("T")[0];
     };
-
     return names.map((name, i) => ({
       id: i + 1,
       name,
-      // eslint-disable-next-line react-hooks/purity
       amount: Math.floor(Math.random() * 8000) + 500,
       txnId: `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
       date: getRandomDate(new Date(2025, 8, 1), new Date(2026, 0, 27)),
     }));
   }, []);
 
-  // --- 2. Search Debounce Logic ---
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setFilterQuery(searchValue);
       setPageNumber(1);
-    }, 400); // Slightly faster debounce
+    }, 400);
     return () => clearTimeout(delayDebounceFn);
   }, [searchValue]);
 
-  // --- 3. Filter Logic (Memoized) ---
   const filteredData = useMemo(() => {
     return allSellers.filter((seller) => {
-      const matchesName = seller.name
-        .toLowerCase()
-        .includes(filterQuery.toLowerCase());
+      const matchesName = seller.name.toLowerCase().includes(filterQuery.toLowerCase());
       const sellerTime = new Date(seller.date).getTime();
-      const startMatch = appliedRange.start
-        ? sellerTime >= new Date(appliedRange.start).getTime()
-        : true;
-      const endMatch = appliedRange.end
-        ? sellerTime <= new Date(appliedRange.end).getTime()
-        : true;
+      const startMatch = appliedRange.start ? sellerTime >= new Date(appliedRange.start).getTime() : true;
+      const endMatch = appliedRange.end ? sellerTime <= new Date(appliedRange.end).getTime() : true;
       return matchesName && startMatch && endMatch;
     });
   }, [filterQuery, appliedRange, allSellers]);
 
-  // --- 4. Totals Calculation ---
-  const totalAmount = useMemo(() => {
-    return filteredData.reduce((sum, item) => sum + item.amount, 0);
-  }, [filteredData]);
-
-  // --- 5. Pagination Slicing ---
+  const totalAmount = useMemo(() => filteredData.reduce((sum, item) => sum + item.amount, 0), [filteredData]);
   const startIndex = (pageNumber - 1) * parPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + parPage);
 
-  // --- 6. Export to Excel
-  const exportToExcel = useCallback(() => {
-    const dataToExport = filteredData.map((item, index) => ({
-      No: index + 1,
-      "Seller Name": item.name,
-      "Amount ($)": item.amount,
-      "Transaction ID": item.txnId,
-      Date: item.date,
-      Status: "Success",
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Payout_History");
-    XLSX.writeFile(workbook, `Report_${new Date().toLocaleDateString()}.xlsx`);
-  }, [filteredData]);
-
   const resetFilters = () => {
-    setStartDate("");
-    setEndDate("");
-    setAppliedRange({ start: "", end: "" });
-    setSearchValue("");
-    setPageNumber(1);
+    setStartDate(""); setEndDate(""); setAppliedRange({ start: "", end: "" });
+    setSearchValue(""); setPageNumber(1);
   };
 
   return (
-    <div className="px-2 md:px-7 py-5 font-sans">
-      {/* Stats Summary Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-        <div className="bg-[#283046] p-5 rounded-lg border border-slate-700 shadow-xl flex items-center gap-4">
-          <div className="w-12 h-12 bg-indigo-500/10 rounded-full flex justify-center items-center text-indigo-500">
-            <MdPayments size={28} />
+    <div className='mt-1 h-[calc(100vh-110px)] w-full bg-[#f8f9fa] overflow-hidden flex flex-col relative px-2 md:px-7 pb-4'>
+      
+      {/* Stats Card - Smaller padding on mobile */}
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-end mt-3 md:mt-5 mb-4 md:mb-6 gap-3 shrink-0">
+        <div className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-3 md:gap-4">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-indigo-50 rounded-xl flex justify-center items-center text-indigo-600 shrink-0">
+            <MdPayments size={22} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-[#d0d2d6]">
-              ${totalAmount.toLocaleString()}
-            </h2>
-            <span className="text-sm text-gray-400">Filtered Total</span>
+            <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest">Filtered Total</p>
+            <h2 className="text-lg md:text-xl font-bold text-gray-800">${totalAmount.toLocaleString()}</h2>
           </div>
         </div>
-        {/* Space for more cards if needed */}
+
+        <div className="flex gap-2">
+            <button className="flex-1 md:flex-none flex justify-center items-center gap-2 bg-emerald-50 text-emerald-600 border border-emerald-100 px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all">
+                <RiFileExcel2Line size={16} /> <span className="hidden sm:inline">EXPORT</span>
+            </button>
+            <button onClick={resetFilters} className="p-2 md:p-2.5 bg-white border border-gray-200 text-gray-400 hover:text-indigo-600 rounded-xl">
+                <MdRefresh size={20} />
+            </button>
+        </div>
       </div>
 
-      <div className="w-full p-6 bg-[#283046] rounded-lg border border-slate-700 shadow-2xl">
-        {/* Header & Controls */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 pb-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold text-[#d0d2d6]">
-              Payment History
-            </h2>
-            <p className="text-sm text-gray-500">
-              Manage and export your store transaction records
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
-            <button
-              onClick={exportToExcel}
-              className="flex items-center gap-2 bg-emerald-600/10 hover:bg-emerald-600 text-emerald-500 hover:text-white border border-emerald-600/20 px-4 py-2.5 rounded-md text-sm font-bold transition-all shadow-lg active:scale-95"
-            >
-              <RiFileExcel2Line size={18} /> EXPORT
-            </button>
-
-            <div className="h-8 w-px bg-slate-700 hidden xl:block"></div>
-
-            <button
-              onClick={resetFilters}
-              title="Reset All"
-              className="bg-slate-700/50 hover:bg-slate-700 text-gray-400 hover:text-white p-2.5 rounded-md transition-all"
-            >
-              <MdRefresh size={22} />
-            </button>
-          </div>
-        </div>
-
-        {/* Filters Bar */}
-        <div className="bg-[#161d31]/50 p-4 rounded-lg mb-6 flex flex-wrap gap-4 items-end border border-slate-800">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] text-indigo-400 font-black uppercase tracking-wider ml-1">
-              Time Period
-            </span>
+      {/* Main Container */}
+      <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+        
+        {/* Filters Bar - Vertical on Mobile */}
+        <div className="p-3 md:p-5 border-b border-gray-50 bg-gray-50/30 flex flex-col lg:flex-row gap-4 lg:items-end shrink-0">
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-[10px] text-gray-400 font-bold uppercase tracking-wider ml-1">Date Range Filter</label>
             <div className="flex items-center gap-2">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-[#283046] border border-slate-700 rounded-md px-3 py-2 text-sm text-[#d0d2d6] outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
-              />
-              <span className="text-gray-600">—</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="bg-[#283046] border border-slate-700 rounded-md px-3 py-2 text-sm text-[#d0d2d6] outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
-              />
+                <div className="flex flex-1 items-center gap-1 bg-white p-1.5 rounded-xl border border-gray-200">
+                    <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="bg-transparent w-full text-[11px] md:text-xs text-gray-600 outline-none" />
+                    <span className="text-gray-300">—</span>
+                    <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="bg-transparent w-full text-[11px] md:text-xs text-gray-600 outline-none" />
+                </div>
+                <button onClick={() => setAppliedRange({ start: startDate, end: endDate })} className="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shrink-0">
+                    <MdFilterList size={18} />
+                </button>
             </div>
           </div>
 
-          <button
-            onClick={() => setAppliedRange({ start: startDate, end: endDate })}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-md text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20"
-          >
-            <MdFilterList size={18} /> Apply Filter
-          </button>
-
-          <div className="flex flex-col gap-1.5 grow max-w-md">
-            <span className="text-[10px] text-indigo-400 font-black uppercase tracking-wider ml-1">
-              Quick Search
-            </span>
+          <div className="flex flex-col gap-1.5 flex-1 lg:max-w-xs">
+            <label className="text-[10px] text-gray-400 font-bold uppercase tracking-wider ml-1">Search Seller</label>
             <div className="relative">
-              <input
-                type="text"
-                placeholder="Search by seller name..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                className="bg-[#283046] border border-slate-700 rounded-md pl-10 pr-4 py-2 text-sm text-[#d0d2d6] outline-none focus:ring-1 focus:ring-indigo-500 w-full transition-all"
-              />
-              <MdSearch
-                className="absolute left-3 top-2.5 text-gray-500"
-                size={18}
-              />
+              <input type="text" placeholder="Search..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-xs text-gray-600 outline-none focus:border-indigo-500" />
+              <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             </div>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="w-full overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-separate border-spacing-y-2">
-            <thead>
-              <tr className="text-xs uppercase text-gray-500 font-black tracking-widest">
-                <th className="pb-4 px-4">No</th>
-                <th className="pb-4 px-4">Seller</th>
-                <th className="pb-4 px-4">Amount</th>
-                <th className="pb-4 px-4">Transaction ID</th>
-                <th className="pb-4 px-4 text-right">Date</th>
-              </tr>
-            </thead>
-            <tbody className="text-[#d0d2d6]">
-              {paginatedData.length > 0 ? (
-                paginatedData.map((seller, i) => (
-                  <tr
-                    key={seller.id}
-                    className="bg-[#161d31]/30 hover:bg-[#161d31] transition-all group"
-                  >
-                    <td className="py-4 px-4 text-sm font-mono text-gray-500 border-y border-l border-slate-700/50 rounded-l-lg">
-                      {startIndex + i + 1}
-                    </td>
-                    <td className="py-4 px-4 text-sm font-bold text-white border-y border-slate-700/50 group-hover:text-indigo-400 transition-colors">
-                      {seller.name}
-                    </td>
-                    <td className="py-4 px-4 border-y border-slate-700/50">
-                      <div className="flex flex-col">
-                        <span className="font-black text-emerald-500">
-                          ${seller.amount.toLocaleString()}
-                        </span>
-                        <span className="text-[10px] text-gray-500 uppercase font-bold">
-                          Verified
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-xs font-mono text-gray-500 border-y border-slate-700/50">
-                      {seller.txnId}
-                    </td>
-                    <td className="py-4 px-4 text-right text-gray-400 text-xs border-y border-r border-slate-700/50 rounded-r-lg">
-                      {seller.date}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="5"
-                    className="text-center py-20 bg-[#161d31]/20 rounded-lg"
-                  >
-                    <div className="flex flex-col items-center gap-2 text-gray-600">
-                      <MdSearch size={40} className="opacity-20" />
-                      <p className="italic">
-                        No records match your current filters
-                      </p>
-                    </div>
-                  </td>
+        {/* Responsive Table Area */}
+        <div className="flex-1 overflow-x-auto custom-scrollbar p-2 md:p-5">
+          <div className="min-w-[600px]"> {/* Prevents table from squashing under 600px */}
+            <table className="w-full text-left border-separate border-spacing-y-2">
+                <thead>
+                <tr className="text-[10px] uppercase text-gray-400 font-bold tracking-widest">
+                    <th className="px-4 py-2">No</th>
+                    <th className="px-4 py-2">Store Name</th>
+                    <th className="px-4 py-2">Amount</th>
+                    <th className="px-4 py-2 hidden md:table-cell">Transaction ID</th>
+                    <th className="px-4 py-2 text-right">Date</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                {paginatedData.map((seller, i) => (
+                    <tr key={seller.id} className="group">
+                    <td className="py-3 px-4 text-xs font-bold text-gray-400 bg-gray-50/50 border-y border-l border-gray-100 rounded-l-2xl">
+                        {startIndex + i + 1}
+                    </td>
+                    <td className="py-3 px-4 text-xs md:text-sm font-bold text-gray-700 bg-gray-50/50 border-y border-gray-100 group-hover:text-indigo-600 transition-colors">
+                        {seller.name}
+                    </td>
+                    <td className="py-3 px-4 bg-gray-50/50 border-y border-gray-100">
+                        <span className="text-xs md:text-sm font-black text-emerald-600">${seller.amount.toLocaleString()}</span>
+                    </td>
+                    <td className="py-3 px-4 text-[11px] font-mono text-gray-400 bg-gray-50/50 border-y border-gray-100 hidden md:table-cell">
+                        {seller.txnId}
+                    </td>
+                    <td className="py-3 px-4 text-right text-[10px] md:text-xs font-bold text-gray-500 bg-gray-50/50 border-y border-r border-gray-100 rounded-r-2xl">
+                        {new Date(seller.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        <span className="hidden sm:inline">, {new Date(seller.date).getFullYear()}</span>
+                    </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+          </div>
         </div>
 
-        {/* Pagination Wrapper */}
-        <div className="w-full flex justify-between items-center mt-8 pt-6 border-t border-slate-700">
-          <span className="text-xs text-gray-500 font-medium">
-            Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + parPage, filteredData.length)} of{" "}
-            {filteredData.length} entries
-          </span>
+        {/* Footer - Optimized for mobile */}
+        <div className="p-4 md:p-6 border-t border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+          <p className="text-[10px] text-gray-400 font-bold uppercase">
+            Showing {paginatedData.length} records
+          </p>
           <Pagination
             pageNumber={pageNumber}
             setPageNumber={setPageNumber}
             totalItem={filteredData.length}
             parPage={parPage}
-            showItem={3}
+            showItem={window.innerWidth < 640 ? 2 : 3}
           />
         </div>
       </div>
