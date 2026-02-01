@@ -89,7 +89,7 @@ const AdminDashboard = () => {
 
         {/* Right Side: Messages (Fixed Height to prevent overflow) */}
         <div className="w-full lg:w-5/12 lg:pl-4 mt-6 lg:mt-0">
-          <div className="w-full bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-[450px] flex flex-col">
+          <div className="w-full bg-white p-5 rounded-xl border border-gray-100 shadow-sm h-112.5 flex flex-col">
             <div className="flex justify-between items-center pb-4 border-b border-gray-100 shrink-0">
               <h2 className="font-bold text-lg text-gray-800">Recent Seller Messages</h2>
               <Link to="/admin/messages" className="text-sm text-indigo-600 hover:underline font-medium">View All</Link>
