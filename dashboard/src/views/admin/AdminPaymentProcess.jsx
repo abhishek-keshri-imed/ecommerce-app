@@ -2,50 +2,62 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEye } from "react-icons/fa";
 import Pagination from '../../components/Pagination';
+import { MdOutlinePendingActions, MdHistory } from "react-icons/md";
 
 const AdminPaymentProcess = () => {
-    // 1. Updated state for 5 items per page
     const [pageNumber, setPageNumber] = useState(1);
     const parPage = 5; 
 
-    // Mock data simulation (usually this comes from Redux or an API)
-    const allRequests = [...Array(25)]; // Let's assume 25 total requests
-    
-    // 2. Logic to slice the data for the current page
+    // Mock data simulation
+    const allRequests = [...Array(25)]; 
     const startIndex = (pageNumber - 1) * parPage;
     const paginatedData = allRequests.slice(startIndex, startIndex + parPage);
 
     return (
-        <div className='px-2 md:px-7 py-5'>
-            <div className='w-full grid grid-cols-1 lg:grid-cols-2 gap-7'>
+        /* Increased top margin and ensured outer container allows for vertical growth */
+        <div className='mt-2h-[calc(100vh-110px)]  w-full bg-[#f8f9fa] flex flex-col px-3 md:px-7 pb-10'>
+            
+            {/* Header Section */}
+            <div className='py-6 shrink-0'>
+                <h1 className='text-2xl font-bold text-gray-800'>Payment Processing</h1>
+                <p className='text-xs text-gray-400 font-medium uppercase tracking-wider'>Manage pending withdrawals and payout history</p>
+            </div>
+
+            {/* Grid container with min-height to prevent jumping during pagination */}
+            <div className='w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'>
                 
-                {/* LEFT SIDE: Withdrawal Requests (WITH PAGINATION) */}
-                <div className='bg-[#283046] text-[#d0d2d6] rounded-lg p-5 border border-slate-700 shadow-xl'>
-                    <h2 className='text-xl font-semibold pb-5 border-b border-slate-700 mb-5'>Withdrawal Requests</h2>
-                    <div className='overflow-x-auto'>
-                        <table className='w-full text-left'>
-                            <thead className='text-xs uppercase text-gray-400 border-b border-slate-700 bg-[#161d31]/50'>
+                {/* LEFT SIDE: Withdrawal Requests - Added min-h-[600px] */}
+                <div className='bg-white rounded-2xl p-5 border border-gray-200 shadow-sm flex flex-col min-h-[600px]'>
+                    <div className='flex items-center gap-3 mb-6'>
+                        <div className='p-2 bg-amber-50 text-amber-600 rounded-lg'>
+                            <MdOutlinePendingActions size={22}/>
+                        </div>
+                        <h2 className='text-lg font-bold text-gray-700'>Withdrawal Requests</h2>
+                    </div>
+
+                    <div className='overflow-x-auto custom-scrollbar flex-1'>
+                        <table className='w-full text-left min-w-[450px]'>
+                            <thead className='text-[10px] uppercase text-gray-400 font-bold tracking-widest bg-gray-50'>
                                 <tr>
-                                    <th className='py-4 px-4'>No</th>
-                                    <th className='py-4 px-4'>Seller</th>
-                                    <th className='py-4 px-4'>Amount</th>
-                                    <th className='py-4 px-4'>Status</th>
-                                    <th className='py-4 px-4 text-right'>Action</th>
+                                    <th className='py-3 px-4 rounded-l-xl'>No</th>
+                                    <th className='py-3 px-4'>Seller</th>
+                                    <th className='py-3 px-4'>Amount</th>
+                                    <th className='py-3 px-4'>Status</th>
+                                    <th className='py-3 px-4 text-right rounded-r-xl'>Action</th>
                                 </tr>
                             </thead>
-                            <tbody className='divide-y divide-slate-700'>
+                            <tbody className='text-gray-600'>
                                 {paginatedData.map((_, i) => (
-                                    <tr key={i} className='hover:bg-[#2d354c] transition-colors'>
-                                        {/* 3. Updated index to show correct numbers across pages */}
-                                        <td className='py-4 px-4 text-sm'>{startIndex + i + 1}</td>
-                                        <td className='py-4 px-4 text-sm font-medium'>Sheikh Store</td>
-                                        <td className='py-4 px-4 font-bold text-indigo-400'>$500</td>
+                                    <tr key={i} className='border-b border-gray-50 hover:bg-gray-50/50 transition-colors group'>
+                                        <td className='py-4 px-4 text-xs font-bold text-gray-400'>#{startIndex + i + 1}</td>
+                                        <td className='py-4 px-4 text-sm font-bold text-gray-700 group-hover:text-indigo-600'>Sheikh Store</td>
+                                        <td className='py-4 px-4 font-black text-indigo-600'>$500.00</td>
                                         <td className='py-4 px-4'>
-                                            <span className='bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded text-[10px] uppercase font-bold'>pending</span>
+                                            <span className='bg-amber-100 text-amber-700 px-2 py-1 rounded-md text-[9px] uppercase font-black'>pending</span>
                                         </td>
                                         <td className='py-4 px-4 text-right'>
-                                            <button className='bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded shadow-lg transition-all active:scale-95 inline-flex items-center justify-center ml-auto'>
-                                                <FaEye size={16} />
+                                            <button className='bg-white border border-gray-200 hover:border-indigo-600 hover:text-indigo-600 text-gray-400 p-2 rounded-xl transition-all shadow-sm active:scale-90'>
+                                                <FaEye size={14} />
                                             </button>
                                         </td>
                                     </tr>
@@ -54,8 +66,8 @@ const AdminPaymentProcess = () => {
                         </table>
                     </div>
                     
-                    {/* Pagination - totalItem should be the length of your actual data */}
-                    <div className='w-full flex justify-end mt-6'>
+                    {/* Pagination stays pinned to bottom due to flex-col and flex-1 above */}
+                    <div className='pt-6 border-t border-gray-50'>
                         <Pagination 
                             pageNumber={pageNumber}
                             setPageNumber={setPageNumber}
@@ -66,42 +78,54 @@ const AdminPaymentProcess = () => {
                     </div>
                 </div>
 
-                {/* RIGHT SIDE: Success History (LAST 10 ONLY - NO PAGINATION) */}
-                <div className='bg-[#283046] text-[#d0d2d6] rounded-lg p-5 border border-slate-700 shadow-xl'>
-                    <div className='flex justify-between items-center pb-5 border-b border-slate-700 mb-5'>
-                        <h2 className='text-xl font-semibold'>Recent Payouts</h2>
+                {/* RIGHT SIDE: Success History - Added min-h-[600px] */}
+                <div className='bg-white rounded-2xl p-5 border border-gray-200 shadow-sm min-h-100 flex flex-col'>
+                    <div className='flex justify-between items-center mb-6'>
+                        <div className='flex items-center gap-3'>
+                            <div className='p-2 bg-indigo-50 text-indigo-600 rounded-lg'>
+                                <MdHistory size={22}/>
+                            </div>
+                            <h2 className='text-lg font-bold text-gray-700'>Recent Payouts</h2>
+                        </div>
                         <Link 
                             to='/admin/dashboard/payment-history' 
-                            className='text-xs text-indigo-400 hover:underline'
+                            className='text-[11px] font-bold text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-all border border-indigo-100'
                         >
-                            View All History
+                            VIEW ALL
                         </Link>
                     </div>
 
-                    <div className='w-full border border-slate-700 rounded-md overflow-hidden'>
-                        <div className='flex justify-between items-center text-[10px] font-bold uppercase bg-[#161d31] p-4 text-gray-500 border-b border-slate-700 tracking-widest'>
-                            <div className='w-[10%]'>No</div>
-                            <div className='w-[35%]'>Seller</div>
-                            <div className='w-[25%]'>Amount</div>
-                            <div className='w-[30%] text-right'>Date</div>
-                        </div>
-                        
-                        <div className='bg-[#161d31]/20 max-h-125 overflow-y-auto scrollbar-hide'>
-                            {[...Array(10)].map((_, i) => (
-                                <div key={i} className='flex justify-between items-center text-sm text-[#d0d2d6] border-b border-slate-700 px-4 py-4 hover:bg-[#2d354c] transition-all'>
-                                    <div className='w-[10%] text-gray-500'>#{i + 1}</div>
-                                    <div className='w-[35%] font-medium'>Fashion World</div>
-                                    <div className='w-[25%] font-bold text-green-500'>$1,200</div>
-                                    <div className='w-[30%] text-right text-gray-400 text-xs'>27 Jan 2026</div>
+                    {/* Increased max-h to utilize the new container height */}
+                    <div className='space-y-3 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar flex-1'>
+                        {[...Array(10)].map((_, i) => (
+                            <div key={i} className='flex justify-between items-center p-4 bg-gray-50/50 border border-gray-100 rounded-2xl hover:border-emerald-200 transition-all'>
+                                <div className='flex items-center gap-4'>
+                                    <div className='w-8 h-8 rounded-full bg-white flex items-center justify-center text-[10px] font-bold text-gray-400 border border-gray-100 shadow-sm'>
+                                        {i + 1}
+                                    </div>
+                                    <div>
+                                        <p className='text-sm font-bold text-gray-700'>Fashion World</p>
+                                        <p className='text-[10px] text-gray-400 font-medium'>27 Jan 2026 • 02:45 PM</p>
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                                <div className='text-right'>
+                                    <p className='text-sm font-black text-emerald-600'>+$1,200.00</p>
+                                    <p className='text-[9px] font-bold text-emerald-500/60 uppercase tracking-tighter'>Transfer Success</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    <p className='text-center text-xs text-gray-500 mt-4 italic'>
-                        Showing the last 10 successful transactions
+                    <p className='text-center text-[10px] text-gray-400 font-bold uppercase mt-6 tracking-widest opacity-50 shrink-0'>
+                        End of recent records
                     </p>
                 </div>
             </div>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+            `}</style>
         </div>
     );
 };

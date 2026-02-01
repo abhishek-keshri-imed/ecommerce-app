@@ -1,24 +1,23 @@
 /* eslint-disable react-hooks/purity */
 import React, { useState, useMemo, useEffect } from "react";
-import {MdKeyboardArrowLeft,MdKeyboardArrowRight,MdSearch,} from "react-icons/md";
+import { MdSearch } from "react-icons/md";
+import Pagination from "../../components/Pagination"; // Using your custom component
 
 const AdminOrder = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [parPage, setParPage] = useState(10);
   const [searchValue, setSearchValue] = useState("");
-  // 1. New state for debounced value
   const [debouncedSearchValue, setDebouncedSearchValue] = useState("");
 
-  // 2. Debounce Logic: Updates debouncedSearchValue after 300ms of no typing
+  // Debounce Logic
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchValue(searchValue);
     }, 300);
-
     return () => clearTimeout(handler);
   }, [searchValue]);
 
-  // --- Data (Memoized) ---
+  // Mock Data
   const recentOrders = useMemo(() => {
     return Array.from({ length: 500 }, (_, i) => ({
       id: `#${45211 + i}`,
@@ -28,7 +27,7 @@ const AdminOrder = () => {
     }));
   }, []);
 
-  // 3. Optimized Filtering: Uses debouncedSearchValue and useMemo
+  // Optimized Filtering
   const filteredOrders = useMemo(() => {
     const term = debouncedSearchValue.toLowerCase();
     return recentOrders.filter((order) => {
@@ -41,155 +40,120 @@ const AdminOrder = () => {
     });
   }, [debouncedSearchValue, recentOrders]);
 
-  // --- Pagination Logic ---
-  const totalPages = Math.ceil(filteredOrders.length / parPage);
+  // Pagination Logic
   const indexOfLastItem = currentPage * parPage;
   const indexOfFirstItem = indexOfLastItem - parPage;
   const currentOrders = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
 
-  // --- Pagination Button Generator ---
-  const getPaginationButtons = () => {
-    const buttons = [];
-    const maxButtonsToShow = 5;
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + maxButtonsToShow - 1);
-
-    if (endPage - startPage < maxButtonsToShow - 1) {
-      startPage = Math.max(1, endPage - maxButtonsToShow + 1);
-    }
-
-    if (startPage > 1) {
-      buttons.push(1);
-      if (startPage > 2) buttons.push("...");
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      if (i > 0) buttons.push(i);
-    }
-
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) buttons.push("...");
-      buttons.push(totalPages);
-    }
-    return buttons;
-  };
-
   return (
-    <div className="w-full p-4 bg-[#283046] rounded-md mt-6 shadow-xl">
-      <div className="flex justify-between items-center pb-6 flex-wrap gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="font-semibold text-xl text-[#d0d2d6]">Orders Management</h2>
-          <p className="text-xs text-slate-500">Track and manage customer orders</p>
-        </div>
+    /* MAIN WRAPPER: White Theme with locked scroll logic */
+    <div className='mt-1 h-[calc(100vh-110px)] w-full bg-[#f8f9fa] overflow-hidden flex flex-col relative'>
+      
+      <div className="flex-1 overflow-y-auto p-4 lg:p-7 custom-scrollbar overscroll-contain">
+        
+        <div className="w-full p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+          
+          {/* Header Controls */}
+          <div className="flex justify-between items-center pb-6 flex-wrap gap-4">
+            <div className="flex flex-col gap-1">
+              <h2 className="font-bold text-xl text-gray-800">Orders Management</h2>
+              <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Track customer transactions</p>
+            </div>
 
-        <div className="flex items-center gap-4">
-          <div className="relative flex items-center">
-            <MdSearch className="absolute left-3 text-slate-400" size={18} />
-            <input
-              type="text"
-              value={searchValue}
-              // Update immediate state for the input field, but reset page immediately
-              onChange={(e) => { 
-                setSearchValue(e.target.value); 
-                setCurrentPage(1); 
-              }}
-              placeholder="Search..."
-              className="pl-10 pr-3 py-2 bg-[#161d31] border border-slate-700 rounded-md text-[#d0d2d6] outline-none focus:border-indigo-500 text-sm w-60"
-            />
-          </div>
+            <div className="flex items-center gap-4">
+              <div className="relative flex items-center">
+                <MdSearch className="absolute left-3 text-gray-400" size={20} />
+                <input
+                  type="text"
+                  value={searchValue}
+                  onChange={(e) => { 
+                    setSearchValue(e.target.value); 
+                    setCurrentPage(1); 
+                  }}
+                  placeholder="Search orders..."
+                  className="pl-10 pr-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 outline-none focus:ring-2 focus:ring-indigo-500 text-sm w-64 shadow-sm transition-all"
+                />
+              </div>
 
-          <select
-            onChange={(e) => { setParPage(Number(e.target.value)); setCurrentPage(1); }}
-            value={parPage}
-            className="bg-[#161d31] text-[#d0d2d6] border border-slate-700 px-3 py-2 rounded-md outline-none text-sm cursor-pointer"
-          >
-            <option value="5">5 </option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="relative overflow-x-auto border border-slate-700 rounded-lg">
-        <table className="w-full text-sm text-left text-[#d0d2d6]">
-          <thead className="text-xs text-slate-400 uppercase border-b border-slate-700 bg-[#1e273a]">
-            <tr>
-              <th className="py-4 px-4">Order ID</th>
-              <th className="py-4 px-4">Price</th>
-              <th className="py-4 px-4">Payment</th>
-              <th className="py-4 px-4">Status</th>
-              <th className="py-4 px-4 text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-700/50">
-            {currentOrders.length > 0 ? (
-              currentOrders.map((order, i) => (
-                <tr key={i} className="hover:bg-[#343d55]/30 transition-all">
-                  <td className="py-4 px-4 text-indigo-400">{order.id}</td>
-                  <td className="py-4 px-4 font-semibold text-white">${order.price}</td>
-                  <td className="py-4 px-4">
-                    <span className={`px-2 py-1 rounded-full text-[10px] uppercase font-bold ${order.paymentStatus === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                      {order.paymentStatus}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className={`px-2 py-1 rounded-md text-[10px] uppercase font-bold ${order.orderStatus === 'delivered' ? 'bg-green-500/10 text-green-500' : 'bg-indigo-500/10 text-indigo-400'}`}>
-                      {order.orderStatus}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4 text-center">
-                    <button className="px-3 py-1 bg-slate-700 hover:bg-indigo-600 rounded text-xs transition-all">View</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan="5" className="text-center py-20 text-slate-500 italic">No orders found.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination Footer */}
-      {filteredOrders.length > 0 && (
-        <div className="w-full flex justify-between items-center mt-6 flex-wrap gap-4">
-          <p className="text-sm text-slate-400">
-            Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredOrders.length)} of {filteredOrders.length}
-          </p>
-
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className="w-9 h-9 flex items-center justify-center bg-slate-800 text-slate-400 rounded-lg disabled:opacity-20 border border-slate-700 hover:bg-indigo-500 hover:text-white"
-            >
-              <MdKeyboardArrowLeft size={20} />
-            </button>
-
-            {getPaginationButtons().map((page, index) => (
-              <button
-                key={index}
-                onClick={() => typeof page === "number" && setCurrentPage(page)}
-                disabled={page === "..."}
-                className={`w-9 h-9 rounded-lg text-xs font-bold transition-all border ${
-                  currentPage === page
-                    ? "bg-indigo-500 text-white border-indigo-400 shadow-lg"
-                    : "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 disabled:border-none"
-                }`}
+              <select
+                onChange={(e) => { setParPage(Number(e.target.value)); setCurrentPage(1); }}
+                value={parPage}
+                className="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg outline-none text-sm font-semibold cursor-pointer focus:ring-2 focus:ring-indigo-500 shadow-sm"
               >
-                {page}
-              </button>
-            ))}
-
-            <button
-              onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="w-9 h-9 flex items-center justify-center bg-slate-800 text-slate-400 rounded-lg disabled:opacity-20 border border-slate-700 hover:bg-indigo-500 hover:text-white"
-            >
-              <MdKeyboardArrowRight size={20} />
-            </button>
+                <option value="5">5 Per Page</option>
+                <option value="10">10 Per Page</option>
+                <option value="20">20 Per Page</option>
+              </select>
+            </div>
           </div>
+
+          {/* Table Container */}
+          <div className="relative overflow-x-auto rounded-xl border border-gray-100">
+            <table className="w-full text-sm text-left text-gray-600">
+              <thead className="text-[11px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 border-b border-gray-100">
+                <tr>
+                  <th className="py-4 px-4">Order ID</th>
+                  <th className="py-4 px-4">Price</th>
+                  <th className="py-4 px-4">Payment</th>
+                  <th className="py-4 px-4">Status</th>
+                  <th className="py-4 px-4 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {currentOrders.length > 0 ? (
+                  currentOrders.map((order, i) => (
+                    <tr key={i} className="hover:bg-indigo-50/30 transition-all group">
+                      <td className="py-4 px-4 font-bold text-indigo-600 italic">{order.id}</td>
+                      <td className="py-4 px-4 font-bold text-gray-800">${order.price}</td>
+                      <td className="py-4 px-4">
+                        <span className={`px-3 py-1 rounded-full text-[10px] uppercase font-bold ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                          {order.paymentStatus}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className={`px-3 py-1 rounded-md text-[10px] uppercase font-bold ${order.orderStatus === 'delivered' ? 'bg-green-100 text-green-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                          {order.orderStatus}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-center">
+                        <button className="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-indigo-600 hover:text-white rounded-lg text-xs font-bold transition-all shadow-sm">
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colSpan="5" className="text-center py-20 text-gray-400 italic font-medium">No matching orders found.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Footer using the imported component */}
+          {filteredOrders.length > 0 && (
+            <div className="w-full flex justify-between items-center mt-8 flex-wrap gap-4 border-t border-gray-100 pt-6">
+              <p className="text-sm font-bold text-gray-400 uppercase tracking-tighter">
+                Showing {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredOrders.length)} <span className="text-gray-300 mx-1">/</span> Total {filteredOrders.length}
+              </p>
+
+              <Pagination
+                pageNumber={currentPage}
+                setPageNumber={setCurrentPage}
+                totalItem={filteredOrders.length}
+                parPage={parPage}
+                showItem={3}
+              />
+            </div>
+          )}
         </div>
-      )}
+      </div>
+
+      <style>{`
+          .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+          .custom-scrollbar::-webkit-scrollbar-track { background: #f8f9fa; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+      `}</style>
     </div>
   );
 };
