@@ -184,7 +184,7 @@ const SellerDashBoard = () => {
                     <img
                       className="w-12 h-12 rounded-xl object-cover border border-gray-100"
                       src={msg.image}
-                      alt=""
+                       alt={`${msg.name} avatar`}
                     />
                     <div className="flex flex-col w-full overflow-hidden">
                       <div className="flex justify-between items-center">

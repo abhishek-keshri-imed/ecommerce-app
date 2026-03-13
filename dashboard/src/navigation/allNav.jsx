@@ -137,13 +137,12 @@ export const allNav = [
     path: "/customer/dashboard",
   },
   {
-    id: 17,
+    id: 18,
     title: "My Orders",
     icon: <AiOutlineShoppingCart />,
     role: "customer",
     path: "/customer/orders",
-  },
-  {
+  },  {
     id: 19,
     title: "Wishlist",
     icon: <AiOutlineHeart />,

@@ -1,4 +1,11 @@
 {
+  "name": "ecommerce-root",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "dashboard",
+    "backend"
+  ],
   "dependencies": {
     "react-to-print": "^3.2.0"
   }
