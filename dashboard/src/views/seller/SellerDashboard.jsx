@@ -241,13 +241,12 @@ const SellerDashBoard = () => {
                     </td>
                     <td className="py-4 px-6 text-right">
                       <Link
-                        to={`/seller/order/${order.id}`}
+                        to={`/seller/order/${order.id.replace('#', '')}`}
                         className="px-4 py-1.5 bg-gray-100 text-gray-600 hover:bg-indigo-600 hover:text-white rounded-lg font-bold text-[10px] transition-all"
                       >
                         VIEW
                       </Link>
-                    </td>
-                  </tr>
+                    </td>                  </tr>
                 ))}
               </tbody>
             </table>

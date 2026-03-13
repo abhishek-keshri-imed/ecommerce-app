@@ -50,8 +50,7 @@ const AdminOrderDetail = () => {
           onClick={() => handlePrint()}
           className="relative group overflow-hidden flex items-center gap-3 px-6 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-2xl transition-all duration-500 hover:bg-indigo-600 hover:ring-4 hover:ring-indigo-500/20 active:scale-95"
         >
-          <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-linear-to-r from-transparent to-white/10 opacity-40 group-hover:animate-shine" />
-          <MdPrint
+          <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/10 opacity-40 group-hover:animate-shine" />          <MdPrint
             className="transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
             size={18}
           />
@@ -145,12 +144,11 @@ const AdminOrderDetail = () => {
                 >
                   <div className="flex items-center gap-4">
                     <img
+                    <img
                       className="w-12 h-12 rounded-lg object-cover print:w-10 print:h-10"
                       src={p.image}
-                      alt=""
-                    />
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-700">
+                      alt={p.name}
+                    />                      <h4 className="text-sm font-bold text-gray-700">
                         {p.name}
                       </h4>
                       <p className="text-[10px] text-gray-400 font-bold">

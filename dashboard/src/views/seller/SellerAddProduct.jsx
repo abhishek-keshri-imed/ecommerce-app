@@ -28,9 +28,8 @@ const SellerAddProduct = () => {
     const files = Array.from(fileRef.current.files);
 
     // 1. Format Validation (JPEG, JPG, PNG only)
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    const allowedTypes = ["image/jpeg", "image/png"];
     const invalidFile = files.find((file) => !allowedTypes.includes(file.type));
-
     if (invalidFile) {
       toast.error(
         "Invalid file format. Please upload only JPEG or PNG images.",

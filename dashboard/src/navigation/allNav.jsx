@@ -130,28 +130,28 @@ export const allNav = [
 
   /* --- CUSTOMER ROUTES --- */
   {
-    id: 12,
+    id: 17,
     title: "Dashboard",
     icon: <AiOutlineDashboard />,
     role: "customer",
     path: "/customer/dashboard",
   },
   {
-    id: 13,
+    id: 17,
     title: "My Orders",
     icon: <AiOutlineShoppingCart />,
     role: "customer",
     path: "/customer/orders",
   },
   {
-    id: 14,
+    id: 19,
     title: "Wishlist",
     icon: <AiOutlineHeart />,
     role: "customer",
     path: "/customer/wishlist",
   },
   {
-    id: 15,
+    id: 20,
     title: "Profile",
     icon: <FiUser />,
     role: "customer",

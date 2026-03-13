@@ -12,12 +12,12 @@ export const sellerRoutes = [
       {
         path: "/seller/dashboard",
         element: <SellerDashboard />,
-        role: "role",
+        role: "seller",
       },
       {
         path: "/seller/add-product",
         element: <SellerAddProduct />,
-        role: "role",
+        role: "seller",
       },
     ],
   },

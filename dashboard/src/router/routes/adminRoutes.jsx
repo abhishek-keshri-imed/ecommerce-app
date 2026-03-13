@@ -27,7 +27,7 @@ export const adminRoutes = [
         children: [
             { path: 'dashboard', element: <AdminDashboard />, role: 'admin' },
             { path: 'orders', element: <AdminOrder />, role: 'admin' },
-            { path: 'dashboard/orders/details/:orderId', element: <OrderDetail/>, role: 'admin' },
+            { path: 'orders/details/:orderId', element: <OrderDetail/>, role: 'admin' },           
             { path: 'categories', element: <AdminCategory />, role: 'admin' },
             { path: 'sellers', element: <AdminSeller />, role: 'admin' },
             { path: 'seller/details/:sellerId', element: <SellerDetails />, role: 'admin' },
