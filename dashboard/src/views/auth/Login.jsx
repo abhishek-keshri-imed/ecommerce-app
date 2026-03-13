@@ -31,7 +31,6 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (honeyPotRef.current.value) return; // Bot protection
-
     const loginData = {
       email: emailRef.current.value,
       password: passwordRef.current.value,

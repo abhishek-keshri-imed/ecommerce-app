@@ -1,8 +1,11 @@
 import {AiOutlineDashboard,AiOutlineShoppingCart,AiOutlineHeart,} from "react-icons/ai";
+import { RiDiscountPercentLine } from "react-icons/ri";
 import { BiCategory, BiLoaderCircle } from "react-icons/bi";
 import { FiUsers, FiUser } from "react-icons/fi"; // Corrected import
 import { MdPayment } from "react-icons/md";
 import { BsChat } from "react-icons/bs";
+import { MdProductionQuantityLimits } from "react-icons/md";
+import { IoLogoWechat } from "react-icons/io5";
 
 export const allNav = [
   /* --- ADMIN ROUTES --- */
@@ -62,6 +65,8 @@ export const allNav = [
     role: "admin",
     path: "/admin/chat-sellers", // Removed /dashboard
   },
+
+
   /* --- SELLER ROUTES --- */
   {
     id: 9,
@@ -72,18 +77,56 @@ export const allNav = [
   },
   {
     id: 10,
-    title: "Add Product",
-    icon: <BiLoaderCircle />,
+    title: "All Product",
+    icon: <MdProductionQuantityLimits />,
     role: "seller",
-    path: "/seller/dashboard/add-product",
+    path: "/seller/products",
   },
   {
     id: 11,
+    title: "Add Product",
+    icon: <BiLoaderCircle />,
+    role: "seller",
+    path: "/seller/add-product",
+  },
+  {
+    id: 12,
+    title: "Discount Product",
+    icon: <RiDiscountPercentLine />,
+    role: "seller",
+    path: "/seller/discount-product",
+  },
+  {
+    id: 13,
     title: "Orders",
     icon: <AiOutlineShoppingCart />,
     role: "seller",
-    path: "/seller/dashboard/orders",
+    path: "/seller/orders",
   },
+  {
+    id: 14,
+    title: "Payment Request",
+    icon: <MdPayment />,
+    role: "seller",
+    path: "/seller/payment",
+  },
+   {
+    id: 15,
+    title: "Chat-Customer",
+    icon: <IoLogoWechat />,
+    role: "seller",
+    path: "/seller/chat-customer",
+  },
+{
+    id: 16,
+    title: "Chat-Support",
+    icon: <IoLogoWechat />,
+    role: "seller",
+    path: "/seller/chat-support",
+  },
+
+
+
 
   /* --- CUSTOMER ROUTES --- */
   {
