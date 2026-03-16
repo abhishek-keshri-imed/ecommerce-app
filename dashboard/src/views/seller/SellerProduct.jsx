@@ -49,9 +49,8 @@ const SellerProduct = () => {
   const handleDelete = (id, name) => {
     Swal.fire({
       title: "Are you sure?",
-      html: `You are about to delete <span class="text-indigo-600 font-bold">${name}</span>.<br/>This action cannot be undone!`,
-      icon: "warning",
-      showCancelButton: true,
+      text: `You are about to delete "${name}". This action cannot be undone!`,
+      icon: "warning",      showCancelButton: true,
       confirmButtonColor: "#4f46e5",
       cancelButtonColor: "#ef4444",
       confirmButtonText: "Yes, delete it!",
