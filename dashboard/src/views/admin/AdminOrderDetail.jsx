@@ -144,11 +144,12 @@ const AdminOrderDetail = () => {
                 >
                   <div className="flex items-center gap-4">
                     <img
-                    <img
                       className="w-12 h-12 rounded-lg object-cover print:w-10 print:h-10"
                       src={p.image}
-                      alt={p.name}
-                    />                      <h4 className="text-sm font-bold text-gray-700">
+                      alt=""
+                    />
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-700">
                         {p.name}
                       </h4>
                       <p className="text-[10px] text-gray-400 font-bold">
