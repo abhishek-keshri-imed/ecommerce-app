@@ -172,11 +172,10 @@ const SellerAddProduct = () => {
                 ref={fileRef}
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/jpeg,image/png"
                 onChange={handleImageChange}
                 className="hidden"
-              />
-            </label>
+              />            </label>
 
             <div className="grid grid-cols-4 gap-4 mt-4">
               {images.map((img, i) => (
