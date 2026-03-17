@@ -15,7 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loader, errorMessage, successMessage, role, userInfo } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const emailRef = useRef(null);
@@ -105,7 +105,6 @@ const Login = () => {
               className="hidden"
               tabIndex="-1"
             />
-
             {/* Email Input */}
             <div>
               <label className="block mb-2 text-sm font-bold text-slate-700 uppercase">
@@ -119,19 +118,12 @@ const Login = () => {
                 className="w-full bg-slate-50 px-5 py-4 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
-
             {/* Password Input */}
             <div>
               <div className="flex justify-between mb-2">
                 <label className="text-sm font-bold text-slate-700 uppercase">
                   Password
                 </label>
-                <Link
-                  to="/forgot-password"
-                  className="text-xs font-bold text-indigo-600 hover:underline"
-                >
-                  Forgot?
-                </Link>
               </div>
               <div className="relative">
                 <input
@@ -160,7 +152,6 @@ const Login = () => {
                 </p>
               )}
             </div>
-
             {/* Submit Button */}
             <button
               disabled={loader}
@@ -175,7 +166,15 @@ const Login = () => {
                 "Login"
               )}
             </button>
-
+           {/* UI UPDATE: Repositioned 'Forgot Password' below the loginaction for improved flow  */}
+            <div className="flex items-center justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-xs font-bold text-indigo-600 hover:underline"
+              >
+                Forgot?
+              </Link>
+            </div>
             <p className="text-center text-sm font-medium text-slate-600">
               Don't have an account?{" "}
               <Link
