@@ -3,14 +3,25 @@ node_modules/
 backend/node_modules/
 dashboard/node_modules/
 
-# Environment Secrets (CRITICAL)
+# Environment Secrets
+# (Never commit these! They contain your DB passwords and JWT secrets)
 .env
 backend/.env
+dashboard/.env.production
+dashboard/.env.development
 
 # Build outputs
+# Note: If you use a Git-based deployment (like GitHub Actions), 
+# you keep this ignored. If you manually build, it's fine to stay ignored.
 dashboard/dist/
 dashboard/build/
 
 # IDE and OS files
 .DS_Store
 .vscode/
+*.log
+
+# IIS Specific (Optional)
+# If you don't want to track the web.config changes in Git
+# backend/web.config
+# dashboard/public/web.config

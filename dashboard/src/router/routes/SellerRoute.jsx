@@ -5,6 +5,7 @@ const MainLayout = lazy(() => import("../../layouts/MainLayout"));
 const SellerProduct = lazy(() => import("../../views/seller/SellerProduct"));
 const SellerDiscount = lazy(() => import("../../views/seller/SellerDiscount"));
 const SellerAddDiscount = lazy(() => import("../../views/seller/SellerAddDiscount"));
+const Sellerorder = lazy(() => import("../../views/seller/Sellerorder"));
 
 export const sellerRoutes = [
   {
@@ -35,6 +36,11 @@ export const sellerRoutes = [
       {
         path: "/seller/add-discount",
         element: <SellerAddDiscount />,
+        role: "seller",
+      },
+      {
+        path: "/seller/orders",
+        element: <Sellerorder />,
         role: "seller",
       },
     ],
