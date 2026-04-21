@@ -37,7 +37,7 @@ export const customer_register = createAsyncThunk(
         return rejectWithValue({ error: error.message });
       }
     }
-  }
+  },
 );
 
 /**
@@ -62,7 +62,7 @@ export const admin_login = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || { error: "Login Failed" });
     }
-  }
+  },
 );
 
 export const customer_login = createAsyncThunk(
@@ -82,7 +82,7 @@ export const customer_login = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || { error: "Login Failed" });
     }
-  }
+  },
 );
 
 // --- NEW: FORGOT PASSWORD THUNK ---
@@ -95,7 +95,7 @@ export const forgot_password = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || { error: error.message });
     }
-  }
+  },
 );
 
 // --- NEW: RESET PASSWORD THUNK ---
@@ -108,7 +108,7 @@ export const reset_password = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data || { error: error.message });
     }
-  }
+  },
 );
 
 export const authSlice = createSlice({
@@ -142,32 +142,33 @@ export const authSlice = createSlice({
         (action) => action.type.endsWith("/pending"),
         (state) => {
           state.loader = true;
-        }
+        },
       )
       .addMatcher(
         (action) => action.type.endsWith("/fulfilled"),
-        (state, { payload }) => {
+        (state, { payload, type }) => { // 1. Add 'type' here (Line 151)
           state.loader = false;
           state.successMessage = payload.message;
 
-          // 1. Log the ACTUAL response from the server to see the name
           console.log("Full Server Response:", payload);
 
-          const decodedToken = decodeToken(payload.token);
-          state.userInfo = decodedToken;
+          // 2. Wrap the token logic in this 'if' statement
+          if (type.includes("login") || type.includes("register")) {
+            const decodedToken = decodeToken(payload.token);
+            state.userInfo = decodedToken;
 
-          // 2. Capture and store the name from the payload (not the token)
-          if (payload.name) {
-            state.userName = payload.name;
-            localStorage.setItem("userName", payload.name);
+            if (payload.name) {
+              state.userName = payload.name;
+              localStorage.setItem("userName", payload.name);
+            }
+
+            const userRole = payload.role || decodedToken?.role;
+            state.role = userRole;
+
+            localStorage.setItem("accessToken", payload.token);
+            localStorage.setItem("role", userRole);
           }
-
-          const userRole = payload.role || decodedToken?.role;
-          state.role = userRole;
-
-          localStorage.setItem("accessToken", payload.token);
-          localStorage.setItem("role", userRole);
-        }
+        },
       )
       // 3. Error State: Capture the specific "error" string from your backend
       .addMatcher(
@@ -175,7 +176,7 @@ export const authSlice = createSlice({
         (state, { payload }) => {
           state.loader = false;
           state.errorMessage = payload?.error || "Operation Failed";
-        }
+        },
       );
   },
 });

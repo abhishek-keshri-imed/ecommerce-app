@@ -6,23 +6,40 @@ require('dotenv').config();
 
 const app = express();
 
-// 1. Dynamic Environment Logic
-const isProduction = process.env.NODE_ENV === 'production';
-const frontendURL = isProduction 
-    ? ['https://ecommerce.test', 'https://api.ecommerce.test:444'] // Allow the dashboard and the API's own origin
-    : 'http://localhost:5173';
+// DB Connection
+dbConnect();
 
-// 2. Middleware
+// 2. CORS CONFIGURATION
+// We allow both your local dev environment and your production domain
+const allowedOrigins = [
+    'https://ecommerce.test',      // Your Production Domain
+    'http://localhost:5173',       // Your Vite Dev Server
+    'http://localhost:4173',       // Your Vite Preview Port
+    'https://api.ecommerce.test:444' 
+];
+
 app.use(cors({
-    origin: frontendURL,
-    credentials: true
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log("Blocked by CORS:", origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // Crucial for Auth Cookies/Tokens
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// 2. Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// DB Connection
-dbConnect();
+
 
 // 3. Health Check (Crucial for IIS/Reverse Proxy testing)
 app.get('/api/health', (req, res) => {

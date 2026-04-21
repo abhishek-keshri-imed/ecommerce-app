@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/purity */
 import React, { useState, useEffect, useMemo } from "react";
 import Pagination from "../../components/Pagination";
-import * as XLSX from "xlsx";
 import { RiFileExcel2Line } from "react-icons/ri";
 import { MdSearch, MdFilterList, MdRefresh, MdPayments } from "react-icons/md";
 
