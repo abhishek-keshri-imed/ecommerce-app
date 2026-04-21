@@ -33,19 +33,25 @@ const Register = () => {
     if (successMessage) {
       toast.success(successMessage);
       dispatch(messageClear());
-      navigate("/"); // Redirect to home or dashboard after successful signup
+      navigate("/login"); // Redirect to home or dashboard after successful signup
     }
   }, [errorMessage, successMessage, dispatch, navigate]);
 
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 
     if (!nameRef.current.value.trim()) newErrors.name = "Full name is required";
     if (!emailRegex.test(emailRef.current.value))
       newErrors.email = "Please enter a valid email";
-    if (passwordRef.current.value.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
+    
+    const password = passwordRef.current.value;
+    if (!passwordRegex.test(password)) 
+    newErrors.password =
+      "Min 8 chars with uppercase, lowercase, number & special character";
+      
+
     if (!agreeRef.current.checked)
       newErrors.agree = "You must accept the terms";
 

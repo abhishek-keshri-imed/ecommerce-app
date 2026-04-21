@@ -13,6 +13,11 @@ const userSchema = new Schema(
     image: { type: String, default: "" },
     method: { type: String, default: "manual" }, 
     paymentStatus: { type: String, default: "inactive" }, 
+    
+    // --- ADD THESE TWO FIELDS ---
+    // Fields for the OTP flow
+    passwordResetToken: { type: String, default: null }, // Stores the 6-digit OTP
+    passwordResetExpires: { type: Date, default: null }, // Stores the 15-min expiry
   },
   { timestamps: true } // Automatically tracks creation and updates
 );

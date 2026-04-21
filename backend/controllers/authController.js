@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const { createToken } = require("../utils/tokenCreate");
 const { responseReturn } = require("../utils/response");
 
@@ -65,7 +66,80 @@ class authController {
     } catch (error) {
       responseReturn(res, 500, { error: error.message });
     }
+  
   };
+
+  // --- FORGOT PASSWORD: OTP GENERATION + RATE LIMITING ---
+    forgot_password = async (req, res) => {
+        const { email } = req.body;
+        try {
+            const user = await userModel.findOne({ email });
+            if (!user) {
+                return responseReturn(res, 404, { error: "Email not found" });
+            }
+
+            // --- ADVANCED RATE LIMITING ---
+            const now = Date.now();
+            if (user.passwordResetExpires) {
+                const timeRemaining = user.passwordResetExpires - now;
+                const totalWindow = 15 * 60 * 1000; // 15 minutes
+                const timeSinceLastRequest = totalWindow - timeRemaining;
+
+                // Cooldown: Block if last request was < 60 seconds ago
+                if (timeSinceLastRequest < 60 * 1000) {
+                    const secondsToWait = Math.ceil((60 * 1000 - timeSinceLastRequest) / 1000);
+                    return responseReturn(res, 429, { 
+                        error: `Please wait ${secondsToWait} seconds before requesting a new code.` 
+                    });
+                }
+            }
+
+            // CSPRNG: Secure 6-digit OTP
+            const otp = crypto.randomInt(100000, 999999).toString();
+
+            // Update user with OTP and 15-minute expiry
+            user.passwordResetToken = otp;
+            user.passwordResetExpires = now + 15 * 60 * 1000;
+            await user.save();
+            console.log(`Generated OTP for ${email}: ${otp}`); // For testing purposes only. Remove in production.
+            // Return OTP for Frontend EmailJS delivery
+            responseReturn(res, 200, { otp, message: "OTP sent to your email" });
+        } catch (error) {
+            responseReturn(res, 500, { error: error.message });
+        }
+    };
+
+    // --- RESET PASSWORD: OTP VERIFICATION ---
+    reset_password = async (req, res) => {
+        const { email, otp, newPassword } = req.body;
+        try {
+            // Find user with valid OTP and check if it hasn't expired
+            const user = await userModel.findOne({
+                email,
+                passwordResetToken: otp,
+                passwordResetExpires: { $gt: Date.now() }
+            });
+
+            if (!user) {
+                return responseReturn(res, 400, { error: "Invalid or expired OTP" });
+            }
+
+            // Hash new password and clear OTP fields atomically
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            
+            await userModel.updateOne(
+                { _id: user._id },
+                { 
+                    $set: { password: hashedPassword },
+                    $unset: { passwordResetToken: 1, passwordResetExpires: 1 } // Atomic cleanup
+                }
+            );
+
+            responseReturn(res, 200, { message: "Password updated successfully" });
+        } catch (error) {
+            responseReturn(res, 500, { error: error.message });
+        }
+    };
 }
 
 module.exports = new authController();

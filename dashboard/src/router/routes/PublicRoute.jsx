@@ -5,6 +5,7 @@ import { lazy } from "react";
 const Login = lazy(() => import("../../views/auth/Login"));
 const Register = lazy(() => import("../../views/auth/Register"));
 const AdminLogin= lazy(()=>import("./../../views/auth/AdminLogin") )  ;
+const ForgotPassword = lazy(() => import("../../views/auth/ForgotPassword"));   
 const NotFound = lazy(() => import("../../views/NotFound"));
 
 
@@ -12,6 +13,8 @@ const NotFound = lazy(() => import("../../views/NotFound"));
 const PublicRoute = [
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+
   {path:  "/admin-login",element: <AdminLogin/>},
   {
         path: '*', // This asterisk matches everything else

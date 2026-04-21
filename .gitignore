@@ -8,7 +8,7 @@ dashboard/node_modules/
 .env
 backend/.env
 dashboard/.env.production
-dashboard/.env.development
+dashboard/.env.local
 
 # Build outputs
 # Note: If you use a Git-based deployment (like GitHub Actions), 

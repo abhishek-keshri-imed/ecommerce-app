@@ -85,6 +85,32 @@ export const customer_login = createAsyncThunk(
   }
 );
 
+// --- NEW: FORGOT PASSWORD THUNK ---
+export const forgot_password = createAsyncThunk(
+  "auth/forgot_password",
+  async (email, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const { data } = await api.post("/forgot-password", { email });
+      return fulfillWithValue(data);
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { error: error.message });
+    }
+  }
+);
+
+// --- NEW: RESET PASSWORD THUNK ---
+export const reset_password = createAsyncThunk(
+  "auth/reset_password",
+  async (info, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      const { data } = await api.post("/reset-password", info);
+      return fulfillWithValue(data);
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { error: error.message });
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState: {
