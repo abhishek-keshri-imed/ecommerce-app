@@ -6,7 +6,7 @@ const SellerProduct = lazy(() => import("../../views/seller/SellerProduct"));
 const SellerDiscount = lazy(() => import("../../views/seller/SellerDiscount"));
 const SellerAddDiscount = lazy(() => import("../../views/seller/SellerAddDiscount"));
 const Sellerorder = lazy(() => import("../../views/seller/Sellerorder"));
-
+const SellerPayment = lazy(() => import("../../views/seller/SellerPayment"));
 export const sellerRoutes = [
   {
     path: "seller",
@@ -43,6 +43,11 @@ export const sellerRoutes = [
         element: <Sellerorder />,
         role: "seller",
       },
+      {
+        path: "/seller/payment",
+        element: <SellerPayment />,
+        role: "seller",
+      }
     ],
   },
 ];
