@@ -25,3 +25,11 @@ dashboard/build/
 # If you don't want to track the web.config changes in Git
 # backend/web.config
 # dashboard/public/web.config
+
+# SSL Certificates
+*.pem
+*.pfx
+*.p12
+
+# Executables
+*.exe
