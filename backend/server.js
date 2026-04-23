@@ -9,61 +9,64 @@ const https = require('https');
 
 const app = express();
 
-// DB Connection
 dbConnect();
 
-// 1. Point to the EXACT files mkcert just created
 const sslOptions = {
     key: fs.readFileSync(path.join(__dirname, 'api.ecommerce.test+2-key.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'api.ecommerce.test+2.pem'))
 };
 
-// 2. CORS CONFIGURATION
-// We allow both your local dev environment and your production domain
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Logic: Use PROD_PORT (5001) for PM2, or PORT (5003) for Nodemon
+const PORT = isProduction ? (process.env.PROD_PORT || 5001) : (process.env.PORT || 5003);
+
 const allowedOrigins = [
-    'https://ecommerce.test',      // Your Production Domain
-    'http://localhost:5173',       // Your Vite Dev Server
-    'http://localhost:4173',       // Your Vite Preview Port
-    'https://api.ecommerce.test:444' ,
-    'https://api.ecommerce.test:5001'
+    process.env.PROD_CLIENT_URL,
+    process.env.DEV_CLIENT_URL,
+    'https://ecommerce.test',
+    'http://localhost:5173',
+    'http://localhost:4173',
+    'https://api.ecommerce.test',
+    'https://api.ecommerce.test:5001',
+    'https://api.ecommerce.test:5003'
 ];
+
+// Add the active dynamic port before initializing CORS
+if (!isProduction) {
+    allowedOrigins.push(`https://api.ecommerce.test:${PORT}`);
+}
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             console.log("Blocked by CORS:", origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
-    credentials: true, // Crucial for Auth Cookies/Tokens
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// 2. Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-
-
-// 3. Health Check (Crucial for IIS/Reverse Proxy testing)
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: 'API is running', mode: process.env.NODE_ENV });
+    res.status(200).json({ 
+        status: 'API is running', 
+        mode: process.env.NODE_ENV,
+        port: PORT 
+    });
 });
 
-// Routes
 app.use('/api', require('./routes/authRoutes'));
-
-const PORT = process.env.PORT || 5000;
 
 https.createServer(sslOptions, app).listen(PORT, () => {
     console.log(`-----------------------------------------------`);
-    console.log(`SECURE: https://api.ecommerce.test:${PORT}`);
-    console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Server Mode: ${process.env.NODE_ENV}`);
+    console.log(`Running on: https://api.ecommerce.test:${PORT}`);
     console.log(`-----------------------------------------------`);
 });

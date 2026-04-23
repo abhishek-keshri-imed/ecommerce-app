@@ -1,0 +1,50 @@
+The Ecommerce Full-Stack Runbook
+
+### 1. Status Check (The "Heartbeat")
+Run these first to see what is actually alive:
+
+Backend Status:
+pm2 status
+
+Port Check (Windows):
+netstat -ano | findstr "5001 5003"
+
+Health Endpoints:
+PROD: https://api.ecommerce.test:5001/api/health
+DEV:  https://api.ecommerce.test:5003/api/health
+
+### 2. Daily Commands
+Restart Prod API (PM2):
+$env:NODE_ENV="production"; pm2 restart ecommerce-api --update-env
+
+Start Dev API (Nodemon):
+cd backend
+npm run dev
+
+Build Frontend for Production:
+cd dashboard
+npm run build
+
+Preview Build (Test Port 5001 Connection):
+cd dashboard
+npm run preview
+
+### 3. Environment Variables (.env)
+
+Backend Configuration:
+PORT=5003 (Dev)
+PROD_PORT=5001 (Prod)
+NODE_ENV= (Set automatically by PM2 or terminal)
+
+Frontend Configuration:
+VITE_API_DEV_URL=https://api.ecommerce.test:5003/api
+VITE_API_PRO_URL=https://api.ecommerce.test:5001/api
+
+### 4. Common Fixes (Emergency Kit)
+
+CORS Error:
+Check if http://localhost:5173 or http://localhost:4173 is in the allowedOrigins array in server.js.
+
+Port 5001 Busy / EADDRINUSE:
+netstat -ano | findstr :5001
+taskkill /F /PID <Enter_PID_Number_From_Step_1>
