@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
-import { useDispatch, useSelector } from "react-redux"; // Added Redux hooks
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { customer_login, messageClear } from "../../store/reducers/authReducer";
 import toast from "react-hot-toast";
 import {
@@ -8,6 +8,7 @@ import {
   HiEyeOff,
   HiExclamationCircle,
   HiUserCircle,
+  HiShieldCheck,
 } from "react-icons/hi";
 
 const Login = () => {
@@ -46,8 +47,6 @@ const Login = () => {
     }
 
     if (successMessage) {
-      // 1. Get the role directly from the source if the state variable is lagging
-      // Check both 'role' and 'userInfo.role'
       const currentRole = role || userInfo?.role;
 
       if (!currentRole) {
@@ -57,7 +56,7 @@ const Login = () => {
 
       toast.success(successMessage);
 
-      // 2. Perform Navigation
+      // Perform Role-Based Navigation
       if (currentRole === "seller") {
         navigate("/seller/dashboard");
       } else if (currentRole === "customer") {
@@ -69,9 +68,9 @@ const Login = () => {
   }, [successMessage, errorMessage, role, userInfo, navigate, dispatch]);
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-12 bg-slate-50 font-sans">
-      {/* LEFT SIDE - CUSTOMER VIBE */}
-      <div className="hidden md:flex md:col-span-5 bg-indigo-700 items-center justify-center p-12 text-white relative">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-12 bg-slate-50 font-sans relative">
+      {/* LEFT SIDE - BRANDING */}
+      <div className="hidden md:flex md:col-span-5 bg-indigo-700 items-center justify-center p-12 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
         <div className="text-center z-10">
           <div className="bg-white/10 p-5 rounded-2xl inline-block mb-6 backdrop-blur-sm border border-white/20">
@@ -86,8 +85,28 @@ const Login = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE - FORM */}
-      <div className="md:col-span-7 flex items-center justify-center p-6 lg:p-20 bg-white">
+      {/* RIGHT SIDE - FORM CONTAINER */}
+      <div className="md:col-span-7 flex items-center justify-center p-6 lg:p-20 bg-white relative">
+        {/* ADMIN PORTAL LINK - TOP RIGHT PLACEMENT */}
+        <div className="absolute top-6 right-6 md:top-10 md:right-10">
+          <Link
+            to="/admin/login"
+            className="flex items-center gap-3 group transition-all"
+          >
+            <div className="text-right hidden sm:block">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-indigo-600 transition-colors">
+                Staff Portal
+              </p>
+              <p className="text-[9px] text-slate-300 uppercase tracking-tighter group-hover:text-indigo-400">
+                Admin Access
+              </p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-indigo-100 group-hover:bg-indigo-50 group-hover:shadow-lg group-hover:shadow-indigo-50 transition-all">
+              <HiShieldCheck className="text-slate-400 group-hover:text-indigo-600 text-xl" />
+            </div>
+          </Link>
+        </div>
+
         <div className="w-full max-w-md mx-auto">
           <div className="mb-10 text-center md:text-left">
             <h2 className="text-3xl font-black text-slate-900 flex items-center justify-center md:justify-start gap-2">
@@ -105,6 +124,7 @@ const Login = () => {
               className="hidden"
               tabIndex="-1"
             />
+
             {/* Email Input */}
             <div>
               <label className="block mb-2 text-sm font-bold text-slate-700 uppercase">
@@ -118,12 +138,19 @@ const Login = () => {
                 className="w-full bg-slate-50 px-5 py-4 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
+
             {/* Password Input */}
             <div>
               <div className="flex justify-between mb-2">
                 <label className="text-sm font-bold text-slate-700 uppercase">
                   Password
                 </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-bold text-indigo-600 hover:underline"
+                >
+                  Forgot?
+                </Link>
               </div>
               <div className="relative">
                 <input
@@ -141,7 +168,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
                 >
                   {showPassword ? <HiEyeOff size={22} /> : <HiEye size={22} />}
                 </button>
@@ -152,10 +179,11 @@ const Login = () => {
                 </p>
               )}
             </div>
+
             {/* Submit Button */}
             <button
               disabled={loader}
-              className="w-full py-4 rounded-xl text-white font-black uppercase tracking-widest bg-indigo-600 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-[0.98] disabled:bg-indigo-300"
+              className="w-full py-4 rounded-xl text-white font-black uppercase tracking-widest bg-indigo-600 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-[0.98] disabled:bg-indigo-300 disabled:shadow-none"
             >
               {loader ? (
                 <span className="flex items-center justify-center gap-2">
@@ -166,7 +194,7 @@ const Login = () => {
                 "Login"
               )}
             </button>
-           {/* UI UPDATE: Repositioned 'Forgot Password' below the loginaction for improved flow  */}
+            {/* UI UPDATE: Repositioned 'Forgot Password' below the loginaction for improved flow  */}
             <div className="flex items-center justify-end">
               <Link
                 to="/forgot-password"
@@ -175,7 +203,8 @@ const Login = () => {
                 Forgot?
               </Link>
             </div>
-            <p className="text-center text-sm font-medium text-slate-600">
+
+            <p className="text-center text-sm font-medium text-slate-600 pt-2">
               Don't have an account?{" "}
               <Link
                 to="/register"

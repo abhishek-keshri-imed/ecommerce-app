@@ -72,7 +72,7 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-12 bg-slate-50 font-sans">
       {/* LEFT SIDE - STORE ANALYTICS VIBE */}
-      <div className="hidden md:flex md:col-span-5 bg-indigo-900 items-center justify-center p-12 text-white relative">
+      <div className="hidden md:flex md:col-span-5 bg-indigo-700 items-center justify-center p-12 text-white relative">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
 
         <div className="text-center z-10">
