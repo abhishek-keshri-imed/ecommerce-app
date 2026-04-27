@@ -17,7 +17,7 @@ const AdminLogin = () => {
 
   // Get all necessary states from Redux
   const { loader, errorMessage, successMessage, role, userInfo } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   const emailRef = useRef(null);
@@ -54,7 +54,12 @@ const AdminLogin = () => {
     // 2. Handle Error Messages
     if (errorMessage) {
       toast.error(errorMessage);
-      dispatch(messageClear());
+      // Use a tiny delay before clearing to ensure the UI has time to react
+      const timer = setTimeout(() => {
+        dispatch(messageClear());
+      }, 15);
+
+      return () => clearTimeout(timer);
     }
 
     // 3. Handle Success Messages (After form submission)
