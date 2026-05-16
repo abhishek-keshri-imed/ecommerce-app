@@ -1,4 +1,5 @@
 import authReducer from "./authReducer";
+import sellerReducer from "./sellerReducer";
 
 /**
  * ROOT REDUCER OBJECT
@@ -9,6 +10,7 @@ const rootReducer = {
     // This key 'auth' is how you will access auth data via useSelector
     // e.g., const { adminInfo } = useSelector(state => state.auth)
     auth: authReducer, 
+    seller: sellerReducer,
     
     // Future expansion:
     // When you create a productReducer.js or cartReducer.js, 

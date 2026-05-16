@@ -1,25 +1,98 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require('mongoose');
 
-const userSchema = new Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, select: false }, // Hides password by default
-    role: {
-      type: String,
-      default: "customer",
-      enum: ["admin", "seller", "customer"], // Production constraint
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true
     },
-    image: { type: String, default: "" },
-    method: { type: String, default: "manual" }, 
-    paymentStatus: { type: String, default: "inactive" }, 
-    
-    // --- ADD THESE TWO FIELDS ---
-    // Fields for the OTP flow
-    passwordResetToken: { type: String, default: null }, // Stores the 6-digit OTP
-    passwordResetExpires: { type: Date, default: null }, // Stores the 15-min expiry
-  },
-  { timestamps: true } // Automatically tracks creation and updates
-);
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true
+    },
+    password: {
+        type: String,
+        required: true,
+        select: false 
+    },
+    role: {
+        type: String,
+        default: 'customer',
+        enum: ['customer', 'seller', 'admin']
+    },
+    image: {
+        type: String,
+        default: ""
+    },
+    method: {
+        type: String,
+        required: true,
+        default: 'local' // Set to 'manual' or 'local' based on your preference
+    },
+    paymentStatus: {
+        type: String,
+        default: 'inactive',
+        enum: ['active', 'inactive']
+    },
+    // Root level status for account approval/locking
+    status: {
+        type: String,
+        default: 'active', 
+        enum: ['active', 'pending', 'frozen']
+    },
+    // Reset Password Fields (Root Level)
+    passwordResetToken: {
+        type: String,
+        default: null
+    },
+    passwordResetExpires: {
+        type: Date,
+        default: null
+    },
+    // Detailed Shop Information
+    shopInfo: {
+        shopName: { 
+            type: String, 
+            trim: true, 
+            default: "" 
+        },
+        shopDescription: { 
+            type: String, 
+            default: "" 
+        },
+        businessEmail: { 
+            type: String, 
+            lowercase: true, 
+            default: "" 
+        }, 
+        phoneNumber: { 
+            type: String, 
+            default: "" 
+        },
+        businessAddress: {
+            street: { type: String, default: "" },
+            city: { type: String, default: "" },
+            state: { type: String, default: "" },
+            zipCode: { type: String, default: "" },
+            country: { type: String, default: "" },
+        },
+        documents: { 
+            type: String, 
+            default: "" 
+        }, 
+        taxId: { 
+            type: String, 
+            default: "" 
+        },
+        socialLinks: {
+            facebook: { type: String, default: "" },
+            instagram: { type: String, default: "" },
+            twitter: { type: String, default: "" },
+        },
+    }
+}, { timestamps: true });
 
-module.exports = model("users", userSchema);
+module.exports = mongoose.model('users', userSchema);

@@ -1,23 +1,28 @@
+import ProtectedRoute from "./ProtectedRoute";
 import { adminRoutes } from "./adminRoutes";
 import { customerRoutes } from "./CustomerRoute";
 import { sellerRoutes } from "./SellerRoute";
 import PrivateRoute from "./PrivateRoute";
-import ProtectedRoute from "./ProtectedRoute";
 
-export const getRoutes = () => {
-  // 1. Combine all role-based and general private routes
-  const allProtectedRoutes = [
+// Step 1: Combine all private route arrays
+const allProtectedRoutes = [
     ...adminRoutes,
     ...customerRoutes,
     ...sellerRoutes,
     ...PrivateRoute,
-  ];
+];
 
-  // 2. Apply the HOC (Higher Order Component) guard to each route
-  return allProtectedRoutes.map((r) => {
+// Step 2: Map and Wrap (Done ONCE at the module level)
+const finalRoutes = allProtectedRoutes.map((r) => {
     return {
-      ...r,
-      element: <ProtectedRoute route={r}>{r.element}</ProtectedRoute>,
+        ...r,
+        element: <ProtectedRoute route={r}>{r.element}</ProtectedRoute>,
     };
-  });
+});
+
+/**
+ * Returns the stable, memoized routing table.
+ */
+export const getRoutes = () => {
+    return finalRoutes;
 };

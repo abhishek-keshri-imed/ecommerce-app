@@ -25,6 +25,7 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+  const [isSeller, setIsSeller] = useState(false);
 
   const checkCapsLock = (e) => setIsCapsLockOn(e.getModifierState("CapsLock"));
 

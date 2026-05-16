@@ -8,7 +8,7 @@ const AdminDashboard = lazy(() => import("../../views/admin/AdminDashboard"));
 const AdminOrder = lazy(() => import("../../views/admin/AdminOrder"));
 const AdminCategory = lazy(() => import("../../views/admin/AdminCategory"));
 const AdminSeller = lazy(() => import("../../views/admin/AdminSeller"));
-const SellerDetails = lazy(() => import("../../views/admin/SellerDetails"));
+const SellerDetails = lazy(() => import("../../views/admin/SellerDetails.jsx"));
 const AdminPaymentsProcess = lazy(() => import("../../views/admin/AdminPaymentProcess"));
 const PaymentHistory=lazy(()=>import("../../views/admin/PaymentHistory"))
 const NotFound=lazy(()=>import("../../views/NotFound"))

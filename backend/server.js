@@ -6,11 +6,15 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const https = require('https'); 
+const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require('./routes/authRoutes'); // Explicitly import for clarity
 
 const app = express();
 
+// Database Connection
 dbConnect();
 
+// SSL Certificates for HTTPS
 const sslOptions = {
     key: fs.readFileSync(path.join(__dirname, 'api.ecommerce.test+2-key.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'api.ecommerce.test+2.pem'))
@@ -18,9 +22,14 @@ const sslOptions = {
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Logic: Use PROD_PORT (5001) for PM2, or PORT (5003) for Nodemon
+// Port Logic
 const PORT = isProduction ? (process.env.PROD_PORT || 5001) : (process.env.PORT || 5003);
 
+// Middleware
+app.use(cookieParser());
+app.use(express.json());
+
+// CORS Configuration
 const allowedOrigins = [
     process.env.PROD_CLIENT_URL,
     process.env.DEV_CLIENT_URL,
@@ -32,13 +41,13 @@ const allowedOrigins = [
     'https://api.ecommerce.test:5003'
 ];
 
-// Add the active dynamic port before initializing CORS
 if (!isProduction) {
     allowedOrigins.push(`https://api.ecommerce.test:${PORT}`);
 }
 
 app.use(cors({
     origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl)
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
@@ -48,12 +57,18 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'accessToken','Cache-Control', 'Pragma', 'Expires'] // Added accessToken and cache headers
 }));
 
-app.use(express.json());
-app.use(cookieParser());
+// Debugging: Log incoming cookies to terminal
+app.use((req, res, next) => {
+  if (!isProduction) {
+    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
+  }
+  next();
+});
 
+// Routes
 app.get('/api/health', (req, res) => {
     res.status(200).json({ 
         status: 'API is running', 
@@ -62,8 +77,10 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-app.use('/api', require('./routes/authRoutes'));
+app.use('/api', authRoutes);
+app.use('/api/admin', adminRoutes);
 
+// HTTPS Server Initialization
 https.createServer(sslOptions, app).listen(PORT, () => {
     console.log(`-----------------------------------------------`);
     console.log(`Server Mode: ${process.env.NODE_ENV}`);

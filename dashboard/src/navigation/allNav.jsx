@@ -1,7 +1,8 @@
 import {AiOutlineDashboard,AiOutlineShoppingCart,AiOutlineHeart,} from "react-icons/ai";
 import { RiDiscountPercentLine } from "react-icons/ri";
 import { BiCategory, BiLoaderCircle } from "react-icons/bi";
-import { FiUsers, FiUser } from "react-icons/fi"; // Corrected import
+import { FiUsers, FiUser } from "react-icons/fi"; 
+import { FiUserCheck } from "react-icons/fi";
 import { MdPayment } from "react-icons/md";
 import { BsChat } from "react-icons/bs";
 import { MdProductionQuantityLimits } from "react-icons/md";
@@ -55,7 +56,7 @@ export const allNav = [
   {
     id: "A07",
     title: "Seller Request",
-    icon: <BiLoaderCircle />,
+    icon: <FiUserCheck />,
     role: "admin",
     path: "/admin/sellers-request", // Removed /dashboard
   },
@@ -66,7 +67,7 @@ export const allNav = [
     role: "admin",
     path: "/admin/chat-sellers", // Removed /dashboard
   },
-
+ 
 
   /* --- SELLER ROUTES --- */
   {
@@ -133,10 +134,6 @@ export const allNav = [
     path: "/seller/chat-support",
   },
   
-
-
-
-
   /* --- CUSTOMER ROUTES --- */
   {
     id: "C01",
