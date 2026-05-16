@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
     status: {
         type: String,
         default: 'active', 
-        enum: ['active', 'pending', 'frozen']
+        enum: ['active', 'pending', 'frozen','deactive']
     },
     // Reset Password Fields (Root Level)
     passwordResetToken: {
