@@ -49,31 +49,51 @@ class authController {
         }
     };
 
-   // --- REGISTRATION ---
+// --- REGISTRATION ---
 register = async (req, res) => {
     const { email, name, password, role, shopInfo } = req.body;
     
     try {
+        // 1. Confirm attachment presence caught by our pipeline router layer
+        if (!req.file) {
+            return responseReturn(res, 400, { error: "Profile verification photo is required" });
+        }
+
+        // 2. Check for existing user records
         const getUser = await userModel.findOne({ email });
         if (getUser) {
             return responseReturn(res, 400, { error: "Email already exists" });
         }
 
-        // --- Logic for status and messages ---
-        // 1. If role is seller, status is pending. Otherwise, active.
+        // FIX 1: Move role/status initialization up so it's available for the parsing logic
         const userRole = role || "customer";
         const initialStatus = userRole === "seller" ? "pending" : "active";
 
+        // 3. SAFE OBJECT STRUCTURAL DESERIALIZATION
+        let parsedShopInfo = {};
+        if (userRole === "seller" && shopInfo) {
+            try {
+                parsedShopInfo = typeof shopInfo === "string" ? JSON.parse(shopInfo) : shopInfo;
+            } catch (parseErr) {
+                return responseReturn(res, 400, { error: "Malformed structural store metadata values format" });
+            }
+        }
+
+        // 4. Extract file access URL address pathway
+        const profileImageUrl = req.file.path || req.file.secure_url || req.file.filename;
+
+        // 5. Database Document Instantiation
         const newUser = await userModel.create({
             name,
             email,
             password: await bcrypt.hash(password, 10),
             role: userRole,
             status: initialStatus,
-            shopInfo: userRole === "seller" ? { ...shopInfo } : {},
+            shopInfo: userRole === "seller" ? parsedShopInfo : {}, // \FIX 2: Pass parsed object
+            image: profileImageUrl //  FIX 3: Assign the variable directly, not newUser.image
         });
 
-        // 2. Custom success messages
+        // 6. Custom success messages
         const successMsg = userRole === "seller" 
             ? "Registration successful! Your account is pending admin approval." 
             : "Registration successful! You can now login to your account.";
@@ -84,7 +104,8 @@ register = async (req, res) => {
                 name: newUser.name,
                 email: newUser.email,
                 role: newUser.role,
-                status: newUser.status
+                status: newUser.status,
+                image: newUser.image
             }
         });
 

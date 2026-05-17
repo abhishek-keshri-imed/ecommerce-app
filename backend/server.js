@@ -29,12 +29,16 @@ const PORT = isProduction ? (process.env.PROD_PORT || 5001) : (process.env.PORT 
 app.use(cookieParser());
 app.use(express.json());
 
+// This allows the frontend to fetch static profile pictures directly via network requests
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // CORS Configuration
 const allowedOrigins = [
     process.env.PROD_CLIENT_URL,
     process.env.DEV_CLIENT_URL,
     'https://ecommerce.test',
     'http://localhost:5173',
+    'https://localhost:5173',
     'http://localhost:4173',
     'https://api.ecommerce.test',
     'https://api.ecommerce.test:5001',

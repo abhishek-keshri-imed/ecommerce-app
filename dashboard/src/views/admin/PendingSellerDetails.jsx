@@ -4,6 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get_seller, seller_status_update, messageClear } from '../../store/reducers/sellerReducer';
 import toast from 'react-hot-toast';
 
+// 1. Unified configuration variable outside the component
+let BASE_SERVER_URL = import.meta.env.VITE_API_BASE_URL || "https://localhost:5003";
+
+if (import.meta.env.PROD) {
+    BASE_SERVER_URL = "https://api.ecommerce.test:5001"; 
+}
+
 const DEFAULT_AVATAR = "https://media.istockphoto.com/id/1500308602/photo/happy-black-man-mature-or-portrait-in-finance-office-about-us-company-profile-picture-or-ceo.jpg?s=612x612&w=0&k=20&c=3BWt_eT7QaaiGx4zI_K63pnntIp5Cv1qW8Pw-_bSlm8=";
 
 const PendingSellerDetails = () => {
@@ -16,13 +23,38 @@ const PendingSellerDetails = () => {
     // Extract slice properties with defensive fallbacks
     const { seller, loader, successMessage, errorMessage } = useSelector(state => state.seller || {});
 
+    const getProfileImage = () => {
+        if (!seller?.image) return DEFAULT_AVATAR;
+
+        const imgStr = String(seller.image);
+
+        // 1. If it's already an absolute URL, return it directly
+        if (imgStr.startsWith('http://') || imgStr.startsWith('https://')) {
+            return imgStr;
+        }
+
+        // 2. Resilient path cleaner
+        let cleanPath = imgStr;
+        const uploadsIdx = imgStr.indexOf('uploads');
+        
+        if (uploadsIdx !== -1) {
+            const remainingPath = imgStr.substring(uploadsIdx + 8);
+            cleanPath = `uploads/${remainingPath}`;
+        } else {
+            cleanPath = imgStr.replace(/\\/g, '/');
+        }
+
+        // 3. Directly assemble using the outer scope configuration 
+        // This stops bundler optimization bugs from losing the variable context!
+        return `${BASE_SERVER_URL}/${cleanPath}`;
+    };
+
     // 1. Fetch data safely on mount
     useEffect(() => {
         if (sellerId) {
             dispatch(get_seller(sellerId));
         }
         
-        // Cleanup on unmount to prevent toast bleed on other pages
         return () => {
             dispatch(messageClear());
         };
@@ -99,7 +131,7 @@ const PendingSellerDetails = () => {
                                     <div className='relative w-full group aspect-square md:aspect-auto'>
                                         <img 
                                             className='w-full h-80 rounded-2xl object-cover border border-gray-200 shadow-sm transition-opacity duration-300' 
-                                            src={seller.image || DEFAULT_AVATAR} 
+                                            src={getProfileImage()} 
                                             alt={`${seller.name || 'Seller'} profile`}
                                             onError={(e) => {
                                                 e.target.onerror = null; 
@@ -159,7 +191,7 @@ const PendingSellerDetails = () => {
                                         </p>
                                     </div>
 
-                                    {/* Form Section: Double-Submit Safe Form Wrapper */}
+                                    {/* Form Section */}
                                     <form onSubmit={handleSubmit} className='mt-8 p-6 bg-indigo-50/50 rounded-2xl border border-indigo-100 flex flex-col md:flex-row gap-4 items-center'>
                                         <div className='w-full md:flex-1'>
                                             <label htmlFor="account-status-select" className='text-[11px] font-bold text-indigo-900 uppercase ml-1'>
