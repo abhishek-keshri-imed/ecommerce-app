@@ -7,6 +7,7 @@ import { MdPayment } from "react-icons/md";
 import { BsChat } from "react-icons/bs";
 import { MdProductionQuantityLimits } from "react-icons/md";
 import { IoLogoWechat } from "react-icons/io5";
+import { FaUserPlus } from "react-icons/fa6";
 import { BiSolidDiscount } from "react-icons/bi";
 
 export const allNav = [
@@ -92,7 +93,7 @@ export const allNav = [
     path: "/seller/add-product",
   },
   {
-    id:  "S09",
+    id:  "S10",
     title: "Add Discount",
     icon: <BiSolidDiscount />,
     role: "seller",
@@ -132,6 +133,13 @@ export const allNav = [
     icon: <IoLogoWechat />,
     role: "seller",
     path: "/seller/chat-support",
+  },
+  {
+    id:  "S09",
+    title: "Seller-Profile",
+    icon: <FaUserPlus />,
+    role: "seller",
+    path: "/seller/profile",
   },
   
   /* --- CUSTOMER ROUTES --- */

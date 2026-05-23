@@ -43,6 +43,33 @@ export const seller_status_update = createAsyncThunk(
     }
 );
 
+// 🛠️ Standardized Return Pattern
+export const get_seller_profile = createAsyncThunk(
+    'seller/get_seller_profile',
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get('/seller/get-profile', { withCredentials: true });
+            return data; 
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+            return rejectWithValue(error.response?.data);
+        }
+    }
+);
+
+// 🛠️ Standardized Return Pattern
+export const update_seller_profile = createAsyncThunk(
+    'seller/update_seller_profile',
+    async (info, { rejectWithValue }) => {
+        try {
+            const { data } = await api.post('/seller/update-profile', info, { withCredentials: true });
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data);
+        }
+    }
+);
+
 export const sellerSlice = createSlice({
     name: "seller",
     initialState: {
@@ -95,7 +122,26 @@ export const sellerSlice = createSlice({
                 }
                 state.seller = action.payload.seller;
             })
-            // ERROR HANDLER
+
+            // 🛠️ PROFILES LIFE-CYCLE HANDLERS ADDED BELOW
+            .addCase(get_seller_profile.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(get_seller_profile.fulfilled, (state, action) => {
+                state.loader = false;
+                // Safely assigns the nested profile details object to your state
+                state.seller = action.payload?.seller || null; 
+            })
+            .addCase(update_seller_profile.pending, (state) => {
+                state.loader = true;
+            })
+            .addCase(update_seller_profile.fulfilled, (state, action) => {
+                state.loader = false;
+                state.successMessage = action.payload?.message || "Profile settings saved!";
+                state.seller = action.payload?.seller || null;
+            })
+
+            // ERROR MATCHER
             .addMatcher(
                 (action) => action.type.endsWith("/rejected") && action.payload !== null,
                 (state, action) => {

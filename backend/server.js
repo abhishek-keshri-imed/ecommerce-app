@@ -7,7 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https'); 
 const adminRoutes = require('./routes/adminRoutes');
-const authRoutes = require('./routes/authRoutes'); // Explicitly import for clarity
+const authRoutes = require('./routes/authRoutes'); 
+const sellerRoutes = require('./routes/sellerRoutes'); 
 
 const app = express();
 
@@ -39,9 +40,11 @@ const allowedOrigins = [
     'https://ecommerce.test',
     'http://localhost:5173',
     'https://localhost:5173',
+    'https://ecommerce.test:5174',
     'http://localhost:4173',
     'https://api.ecommerce.test',
     'https://api.ecommerce.test:5001',
+    'https://localhost:5174',
     'https://api.ecommerce.test:5003'
 ];
 
@@ -83,6 +86,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/seller', sellerRoutes);
 
 // HTTPS Server Initialization
 https.createServer(sslOptions, app).listen(PORT, () => {
