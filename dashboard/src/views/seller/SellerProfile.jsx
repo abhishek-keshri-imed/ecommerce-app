@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion as Motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion'; // 🪄 Animation engine
 import { get_seller_profile, update_seller_profile, messageClear } from '../../store/reducers/sellerReducer';
 import toast from 'react-hot-toast';
 import { 
@@ -26,34 +26,32 @@ const SellerProfile = () => {
         instagram: ''
     });
 
+    // populate form when seller is loaded
+    useEffect(() => {
+        if (seller) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setFormState({
+                shopName: seller?.shopInfo?.shopName || '',
+                phoneNumber: seller?.shopInfo?.phoneNumber || '',
+                shopDescription: seller?.shopInfo?.shopDescription || '',
+                businessEmail: seller?.shopInfo?.businessEmail || '',
+                taxId: seller?.shopInfo?.taxId || '',
+                street: seller?.shopInfo?.businessAddress?.street || '',
+                city: seller?.shopInfo?.businessAddress?.city || '',
+                state: seller?.shopInfo?.businessAddress?.state || '',
+                zipCode: seller?.shopInfo?.businessAddress?.zipCode || '',
+                facebook: seller?.shopInfo?.socialLinks?.facebook || '',
+                instagram: seller?.shopInfo?.socialLinks?.instagram || ''
+            });
+        }
+    }, [seller]);
+
     // 1. Initial Profile Fetch
     useEffect(() => {
         dispatch(get_seller_profile());
     }, [dispatch]);
 
-    // 2. Data Model Hydration & Safety Guard
-    useEffect(() => {
-        if (seller?.shopInfo) {
-            setFormState(prev => {
-                if (prev.shopName && seller.shopInfo.shopName === prev.shopName) return prev;
-                return {
-                    shopName: seller.shopInfo.shopName || '',
-                    phoneNumber: seller.shopInfo.phoneNumber || '',
-                    shopDescription: seller.shopInfo.shopDescription || '',
-                    businessEmail: seller.shopInfo.businessEmail || '',
-                    taxId: seller.shopInfo.taxId || '',
-                    street: seller.shopInfo.businessAddress?.street || '',
-                    city: seller.shopInfo.businessAddress?.city || '',
-                    state: seller.shopInfo.businessAddress?.state || '',
-                    zipCode: seller.shopInfo.businessAddress?.zipCode || '',
-                    facebook: seller.shopInfo.socialLinks?.facebook || '',
-                    instagram: seller.shopInfo.socialLinks?.instagram || ''
-                };
-            });
-        }
-    }, [seller]);
-
-    // 3. Notification Handling
+    // 2. Notification Handling
     useEffect(() => {
         if (successMessage) {
             toast.success(successMessage);
@@ -90,7 +88,7 @@ const SellerProfile = () => {
     };
 
     return (
-        <motion.div 
+        <Motion.div 
             initial="hidden"
             animate="visible"
             variants={containerVariants}
@@ -102,7 +100,7 @@ const SellerProfile = () => {
             <div className='w-full grid grid-cols-1 lg:grid-cols-3 gap-8 items-start'>
                 
                 {/* Left Overview Column */}
-                <motion.div variants={cardVariants} className='bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden sticky top-6'>
+                <Motion.div variants={cardVariants} className='bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden sticky top-6'>
                     <div className='h-24 bg-gradient-to-r from-indigo-500 to-violet-600 w-full' />
                     <div className='p-6 pt-0 flex flex-col items-center text-center -mt-12'>
                         <div className='w-24 h-24 rounded-2xl bg-white p-1 shadow-md mb-4'>
@@ -131,10 +129,10 @@ const SellerProfile = () => {
                            
                         </div>
                     </div>
-                </motion.div>
+                    </Motion.div>
 
                 {/* Right Interactive Form Area */}
-                <motion.div variants={cardVariants} className='lg:col-span-2 bg-white p-6 lg:p-8 rounded-2xl border border-slate-200/80 shadow-sm'>
+                <Motion.div variants={cardVariants} className='lg:col-span-2 bg-white p-6 lg:p-8 rounded-2xl border border-slate-200/80 shadow-sm'>
                     <form onSubmit={handleSubmit} className='space-y-8'>
                         
                         {/* Section 1: Core Store Details */}
@@ -219,7 +217,7 @@ const SellerProfile = () => {
 
                         {/* Animated Submit Button */}
                         <div className='pt-4 border-t border-slate-100 flex justify-end'>
-                            <motion.button 
+                            <Motion.button 
                                 whileHover={{ scale: 1.01 }}
                                 whileTap={{ scale: 0.99 }}
                                 type='submit' 
@@ -235,12 +233,12 @@ const SellerProfile = () => {
                                         Saving Profile Changes...
                                     </>
                                 ) : 'Save Settings'}
-                            </motion.button>
+                            </Motion.button>
                         </div>
                     </form>
-                </motion.div>
+                </Motion.div>
             </div>
-        </motion.div>
+        </Motion.div>
     );
 };
 
