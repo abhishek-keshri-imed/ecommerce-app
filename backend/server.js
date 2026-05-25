@@ -9,6 +9,7 @@ const https = require('https');
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes'); 
 const sellerRoutes = require('./routes/sellerRoutes'); 
+const categoryRoutes = require('./routes/categoryRoutes');  
 
 const app = express();
 
@@ -29,6 +30,7 @@ const PORT = isProduction ? (process.env.PROD_PORT || 5001) : (process.env.PORT 
 // Middleware
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // This allows the frontend to fetch static profile pictures directly via network requests
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -87,6 +89,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/seller', sellerRoutes);
+app.use('/api', categoryRoutes);
 
 // HTTPS Server Initialization
 https.createServer(sslOptions, app).listen(PORT, () => {

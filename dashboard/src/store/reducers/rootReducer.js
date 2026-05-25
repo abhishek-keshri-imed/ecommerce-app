@@ -1,5 +1,6 @@
 import authReducer from "./authReducer";
 import sellerReducer from "./sellerReducer";
+import categoryReducer from "./categoryReducer";
 
 /**
  * ROOT REDUCER OBJECT
@@ -11,6 +12,7 @@ const rootReducer = {
     // e.g., const { adminInfo } = useSelector(state => state.auth)
     auth: authReducer, 
     seller: sellerReducer,
+    category: categoryReducer,
     
     // Future expansion:
     // When you create a productReducer.js or cartReducer.js, 

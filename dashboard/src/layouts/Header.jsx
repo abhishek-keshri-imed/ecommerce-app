@@ -18,16 +18,7 @@ const Header = ({ showSidebar, setShowSidebar }) => {
         </div>
 
         <div className="hidden md:block">
-          <input
-            className="px-3 py-2 outline-none border bg-transparent border-slate-700 rounded-md text-[#d0d2d6] 
-                   focus:border-indigo-500 focus:shadow-[0_0_5px_rgba(99,102,241,0.5)] 
-                   overflow-hidden transition-all duration-300 w-full md:w-62.5 focus:md:w-75"
-            type="text"
-            name="search"
-            placeholder="Search..."
-            // Logic handling
-            onChange={(e) => console.log(e.target.value)}
-          />
+         
         </div>
 
         {/* Right Side: User Profile */}

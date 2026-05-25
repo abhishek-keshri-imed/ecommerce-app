@@ -25,7 +25,7 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
-  const [isSeller, setIsSeller] = useState(false);
+  
 
   const checkCapsLock = (e) => setIsCapsLockOn(e.getModifierState("CapsLock"));
 
@@ -129,7 +129,7 @@ const Login = () => {
             {/* Email Input */}
             <div>
               <label className="block mb-2 text-sm font-bold text-slate-700 uppercase">
-                Email Address
+                Email
               </label>
               <input
                 ref={emailRef}
