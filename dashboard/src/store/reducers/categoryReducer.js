@@ -36,6 +36,7 @@ export const get_categories = createAsyncThunk(
   },
 );
 
+// Thunk 3: Delete Category Node by ID
 export const delete_category = createAsyncThunk(
   "category/delete_category",
   async (categoryId, { rejectWithValue, fulfillWithValue }) => {
@@ -44,6 +45,25 @@ export const delete_category = createAsyncThunk(
         withCredentials: true,
       });
       return fulfillWithValue(data);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+// Thunk 4: Update Category Node by ID (Supports optional image update)
+export const update_category = createAsyncThunk(
+  "category/update_category",
+  async ({ categoryId, formData }, { rejectWithValue }) => {
+    try {
+      const { data } = await api.put(
+        `/category-update/${categoryId}`,
+        formData,
+        {
+          withCredentials: true,
+        },
+      );
+      return data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -89,6 +109,18 @@ export const categorySlice = createSlice({
 
         const deletedId = meta.arg;
         state.categories = state.categories.filter((c) => c._id !== deletedId);
+      })
+      .addCase(update_category.fulfilled, (state, { payload }) => {
+        state.loader = false;
+        state.successMessage = payload.message;
+        // Update the specific category in the array
+        const index = state.categories.findIndex(
+          (c) => c._id === payload.category._id,
+        );
+        if (index !== -1) {
+          state.categories[index] = payload.category;
+        }
+        state.successMessage = "Category updated successfully!";
       })
       // Universal Error Catching Matcher
       .addMatcher(

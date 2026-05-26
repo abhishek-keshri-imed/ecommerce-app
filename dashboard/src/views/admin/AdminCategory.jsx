@@ -8,6 +8,7 @@ import {
   get_categories,
   messageClear,
   delete_category,
+  update_category,
 } from "../../store/reducers/categoryReducer";
 import toast from "react-hot-toast";
 
@@ -29,6 +30,7 @@ const Category = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [editId, setEditId] = useState("");
 
   // Fetch all existing categories from the database on component mount
   useEffect(() => {
@@ -40,6 +42,7 @@ const Category = () => {
     if (successMessage) {
       toast.success(successMessage);
       setState({ name: "", parentId: "" });
+      setEditId("");
       setImageShow("");
       setImageFile(null);
       dispatch(messageClear());
@@ -86,7 +89,13 @@ const Category = () => {
     formData.append("parentId", state.parentId);
     if (imageFile) formData.append("image", imageFile);
 
-    dispatch(category_add(formData));
+    if (editId) {
+      // If editId exists, update
+      dispatch(update_category({ categoryId: editId, formData }));
+    } else {
+      // Otherwise, add new
+      dispatch(category_add(formData));
+    }
   };
 
   // Filter real-time array lists based on search token inputs
@@ -189,9 +198,19 @@ const Category = () => {
                           </td>
                           <td className="py-4 px-4">
                             <div className="flex justify-center items-center gap-3">
-                              <Link className="p-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-500 hover:text-white transition-all shadow-sm">
+                              <button
+                                onClick={() => {
+                                  setEditId(d._id);
+                                  setState({
+                                    name: d.name,
+                                    parentId: d.parentId || "",
+                                  });
+                                  setImageShow(d.image);
+                                }}
+                                className="p-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-500 hover:text-white transition-all shadow-sm"
+                              >
                                 <FaEdit size={14} />
-                              </Link>
+                              </button>
                               <button
                                 onClick={() => handleDeleteClick(d._id)}
                                 className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-sm"
@@ -262,7 +281,7 @@ const Category = () => {
           <div className="w-full lg:w-[38%]">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 sticky top-0">
               <h2 className="font-bold mb-6 text-lg text-gray-800 border-b border-gray-100 pb-4 tracking-tight">
-                Add New Category
+                {editId ? "Update Category" : "Add New Category"}
               </h2>
               <form onSubmit={handleFormSubmit}>
                 <div className="flex flex-col w-full gap-2 mb-4">
@@ -303,7 +322,7 @@ const Category = () => {
                   >
                     <option value="">Main Category</option>
                     {categories
-                      .filter((c) => !c.parentId)
+                      .filter((c) => !c.parentId && c._id !== editId)
                       .map((parent) => (
                         <option key={parent._id} value={parent._id}>
                           {parent.name}
@@ -344,13 +363,33 @@ const Category = () => {
                   />
                 </div>
 
-                <button
-                  disabled={loader}
-                  type="submit"
-                  className="bg-indigo-600 w-full text-white rounded-xl px-7 py-3 font-bold uppercase text-sm hover:shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50"
-                >
-                  {loader ? "Saving Data Streams..." : "Save Category"}
-                </button>
+                <div className="flex gap-3 mt-6">
+                  {editId && (
+                    <button
+                      onClick={() => {
+                        setEditId("");
+                        setState({ name: "", parentId: "" });
+                        setImageShow("");
+                        setImageFile(null);
+                      }}
+                      type="button"
+                      className="bg-gray-400 w-full text-white rounded-xl px-7 py-3 font-bold uppercase text-sm hover:bg-gray-500 transition-all"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    disabled={loader}
+                    type="submit"
+                    className="bg-indigo-600 w-full text-white rounded-xl px-7 py-3 font-bold uppercase text-sm hover:shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                  >
+                    {loader
+                      ? "Processing..."
+                      : editId
+                        ? "Update Category"
+                        : "Save Category"}
+                  </button>
+                </div>
               </form>
             </div>
           </div>

@@ -116,6 +116,60 @@ class categoryController {
       return res.status(500).json({ error: "Failed to delete category" });
     }
   };
+update_category = async (req, res) => {
+    const { categoryId } = req.params;
+
+    const form = new formidable.IncomingForm();
+
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        return res.status(400).json({ error: "Failed to process form data" });
+      }
+
+      try {
+        let name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
+        let parentId = Array.isArray(fields.parentId) ? fields.parentId[0] : fields.parentId;
+        let imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+
+        let updateData = {
+          name: name ? name.trim() : undefined,
+          parentId: parentId || null,
+        };
+
+        if (imageFile && imageFile.filepath) {
+          const uploadResult = await cloudinary.uploader.upload(
+            imageFile.filepath,
+            {
+              folder: "ecommerce-categories",
+              http_agent: new (require("https").Agent)({
+                rejectUnauthorized: false,
+              }),
+            }
+          );
+          updateData.image = uploadResult.secure_url;
+        }
+
+        // --- FIXED SECTION ---
+        // Use categoryId (from req.params) and the correct variable name
+        const updatedCategory = await Category.findOneAndUpdate(
+          { _id: categoryId }, 
+          updateData,
+          { returnDocument: 'after' }
+        );
+
+        if (!updatedCategory) {
+          return res.status(404).json({ error: "Category not found" });
+        }
+
+        return res.status(200).json({
+          message: "Category updated successfully",
+          category: updatedCategory, // Use the correct variable name here
+        });
+      } catch (error) {
+        return res.status(500).json({ error: error.message });
+      }
+    });
+  };
 }
 
 module.exports = new categoryController();
